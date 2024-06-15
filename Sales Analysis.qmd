@@ -158,6 +158,7 @@ Numeric_Columns <- Data |>
 
 ```{r, warning=FALSE}
 # Load necessary libraries
+library(ggplot2)
 library(dplyr)
 library(gridExtra)
 
