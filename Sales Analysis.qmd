@@ -22,32 +22,11 @@ By employing suitable statistical analyses, we gave valuable insights into the r
 -   Consider normality assumptions for specific tests and address them through transformation if necessary.
 -   Utilize visualization techniques throughout the analysis to effectively communicate insights.
 
-# 1. Data Preparation
-
-## - Cleaning:
-
-Ensure data accuracy by checking for missing values, outliers and inconsistencies.
-
--   **Data types**
-
-This project outlines the steps for analyzing data on sales, profit and tax It includes 
-recommended statistical analyses for both numerical and categorical variables.
-
-By employing suitable statistical analyses, we gave valuable insights into the relationships between sales, profit and tax This information can be used to optimize **_pricing strategies_**, **_improve sales performance_** and **_make informed business decisions_**. 
-
-# Considerations
-  * Choose the statistical analysis appropriate for the data type (numerical vs. categorical). 
-  * Consider normality assumptions for specific tests and address them through 
-transformation if necessary. 
-  * Utilize visualization techniques throughout the analysis to effectively communicate 
-insights. 
 
 # 1. Data Preparation 
 
-## - Cleaning:
-Ensure data accuracy by checking for missing values, outliers and inconsistencies.
+- **Loading and Checking Data types**
 
-* **Data types**
 ```{r, warning=FALSE}
 library(dplyr)
 library(gt)
@@ -61,10 +40,12 @@ glimpse(df)
 
 ```
 
-- **Data types conversion**
+* **Typical problems revealed by data types** 
 
-* **Data types conversion** 
+In the date column, it is reviewed that the dates are in string format '<chr>'. Let us utilize `lubridate` R-package to address this issue. Another issue noticed in the data is the user name, we need to combine first name and last name columns. 
 
+
+* Convert to date 
 
 ```{r}
 
@@ -77,19 +58,7 @@ class(df2$order_date)
 
 ```
 
--   **Missing Values**
-
-```{r}
-
-# Check the total number of null values in each column
-sapply(df2, function(x) sum(is.na(x)))
-
-```
-
-## - Derive New Variables:
-
-Calculate metrics such as profit margin (profit / sales) and period features. 
-* **Merge Columns**
+* Merge name columns
 
 ```{r}
 library(dplyr)
@@ -98,11 +67,37 @@ df2$Name <- paste(df2$`First Name`, df2$`Last Name`, sep = " ")
 
 ```
 
+
+-   **Create a subset of our data frame**
+We need to select, explore and analyse only the columns needed to achieve our objective.
+
+```{r}
+library(gt)
+Data <-
+select(df2,
+ order_date, status, item_id, sku, qty_ordered, price, value, discount_amount, total, category, payment_method, Gender, age, full_name,`Place Name`, County, City, State, Region, Discount_Percent)
+
+gt(head(Data))
+```
+
+# 2. Exploratory Data Analysis (EDA)
+
+```{r}
+library(skimr)
+
+skim(Data)
+```
+
+
+* **Typical problems revealed by data summaries**
+
+
 * **Add period features (year, Quarter, month, week and days)**
 
 ```{r}
+library(lubridate)
 
-df2 <- df2 |> 
+Data <- Data |> 
   mutate(
     Month = month(order_date),
     MonthName = month(order_date, label = TRUE, abbr = FALSE),
@@ -118,29 +113,11 @@ df2 <- df2 |>
     year = year(order_date)
   )
 
-# Glimpse only the new columns
-glimpse(select(df2, MonthName,MonthNumber, Day, Week, isoWeek, DayOfMonth, DayOfWeek, DayName, DayOfYr, quarter, year))
+# Glimpse of columns
+glimpse(Data)
 
 ```
-
--   **Let us subset the data frame**
-```{r}
-library(gt)
-Data <-
-select(df2,
- order_id, order_date, status, item_id, sku, qty_ordered, price, value, discount_amount, total, category, payment_method, cust_id, Gender, age, full_name,`Place Name`, County, City, State, Region, Discount_Percent, MonthName,MonthNumber, Day, Week, isoWeek, DayOfMonth, DayOfWeek, DayName, DayOfYr, quarter, year)
-
-gt(head(Data))
-```
-
-# 2. Exploratory Data Analysis (EDA)
-```{r}
-library(skimr)
-
-skim(Data)
-```
-
-# 3. Data Visualization
+# 3. Spotting problems using graphics and visualization
 
 -   **Objective:** Visualizing the distribution of a single variable, as well as relationships between two or more variables in the sales data frame.
 
@@ -196,6 +173,7 @@ grid.arrange(histogram_plot1, histogram_plot2,histogram_plot3,histogram_plot4, n
 ```
 
 ## 3.2 Visualizing Outliers (box plots)
+
 
 ## 3.3 Visualizing Relationships (Two Numerical Variables)
 

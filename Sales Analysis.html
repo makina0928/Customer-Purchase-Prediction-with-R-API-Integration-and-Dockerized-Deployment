@@ -112,31 +112,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="data-preparation" class="level1">
 <h1>1. Data Preparation</h1>
-<section id="cleaning" class="level2">
-<h2 class="anchored" data-anchor-id="cleaning">- Cleaning:</h2>
-<p>Ensure data accuracy by checking for missing values, outliers and inconsistencies.</p>
 <ul>
-<li><strong>Data types</strong></li>
-</ul>
-<p>This project outlines the steps for analyzing data on sales, profit and tax It includes recommended statistical analyses for both numerical and categorical variables.</p>
-<p>By employing suitable statistical analyses, we gave valuable insights into the relationships between sales, profit and tax This information can be used to optimize <strong><em>pricing strategies</em></strong>, <strong><em>improve sales performance</em></strong> and <strong><em>make informed business decisions</em></strong>.</p>
-</section>
-</section>
-<section id="considerations-1" class="level1">
-<h1>Considerations</h1>
-<ul>
-<li>Choose the statistical analysis appropriate for the data type (numerical vs.&nbsp;categorical).</li>
-<li>Consider normality assumptions for specific tests and address them through transformation if necessary.</li>
-<li>Utilize visualization techniques throughout the analysis to effectively communicate insights.</li>
-</ul>
-</section>
-<section id="data-preparation-1" class="level1">
-<h1>1. Data Preparation</h1>
-<section id="cleaning-1" class="level2">
-<h2 class="anchored" data-anchor-id="cleaning-1">- Cleaning:</h2>
-<p>Ensure data accuracy by checking for missing values, outliers and inconsistencies.</p>
-<ul>
-<li><strong>Data types</strong></li>
+<li><strong>Loading and Checking Data types</strong></li>
 </ul>
 <div class="cell">
 <details class="code-fold">
@@ -192,8 +169,11 @@ $ Discount_Percent &lt;dbl&gt; 0.000000, 0.000000, 0.000000, 0.000000, 0.000000,
 </div>
 </div>
 <ul>
-<li><p><strong>Data types conversion</strong></p></li>
-<li><p><strong>Data types conversion</strong></p></li>
+<li><strong>Typical problems revealed by data types</strong></li>
+</ul>
+<p>In the date column, it is reviewed that the dates are in string format ‘<chr>’. Let us utilize <code>lubridate</code> R-package to address this issue. Another issue noticed in the data is the user name, we need to combine first name and last name columns.</chr></p>
+<ul>
+<li>Convert to date</li>
 </ul>
 <div class="cell">
 <details class="code-fold">
@@ -210,120 +190,48 @@ $ Discount_Percent &lt;dbl&gt; 0.000000, 0.000000, 0.000000, 0.000000, 0.000000,
 </div>
 </div>
 <ul>
-<li><strong>Missing Values</strong></li>
+<li>Merge name columns</li>
 </ul>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the total number of null values in each column</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sapply</span>(df2, <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>        order_id       order_date           status          item_id 
-               5                0                0                0 
-             sku      qty_ordered            price            value 
-               0                0                0                0 
- discount_amount            total         category   payment_method 
-               0                0                0                0 
-           bi_st          cust_id             year            month 
-               0                0                0                0 
-         ref_num      Name Prefix       First Name   Middle Initial 
-               0                0                0                0 
-       Last Name           Gender              age        full_name 
-               0                0                0                0 
-          E Mail     Sign in date        Phone No.       Place Name 
-               0                0                0                0 
-          County             City            State              Zip 
-               0                0                0                0 
-          Region        User Name Discount_Percent 
-               0                0                0 </code></pre>
-</div>
-</div>
-</section>
-<section id="derive-new-variables" class="level2">
-<h2 class="anchored" data-anchor-id="derive-new-variables">- Derive New Variables:</h2>
-<p>Calculate metrics such as profit margin (profit / sales) and period features. * <strong>Merge Columns</strong></p>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>df2<span class="sc">$</span>Name <span class="ot">&lt;-</span> <span class="fu">paste</span>(df2<span class="sc">$</span><span class="st">`</span><span class="at">First Name</span><span class="st">`</span>, df2<span class="sc">$</span><span class="st">`</span><span class="at">Last Name</span><span class="st">`</span>, <span class="at">sep =</span> <span class="st">" "</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>df2<span class="sc">$</span>Name <span class="ot">&lt;-</span> <span class="fu">paste</span>(df2<span class="sc">$</span><span class="st">`</span><span class="at">First Name</span><span class="st">`</span>, df2<span class="sc">$</span><span class="st">`</span><span class="at">Last Name</span><span class="st">`</span>, <span class="at">sep =</span> <span class="st">" "</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <ul>
-<li><strong>Add period features (year, Quarter, month, week and days)</strong></li>
+<li><strong>Create a subset of our data frame</strong> We need to select, explore and analyse only the columns needed to achieve our objective.</li>
 </ul>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>df2 <span class="ot">&lt;-</span> df2 <span class="sc">|&gt;</span> </span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">Month =</span> <span class="fu">month</span>(order_date),</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">MonthName =</span> <span class="fu">month</span>(order_date, <span class="at">label =</span> <span class="cn">TRUE</span>, <span class="at">abbr =</span> <span class="cn">FALSE</span>),</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">MonthNumber =</span> <span class="fu">month</span>(order_date),</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Day =</span> <span class="fu">day</span>(order_date),</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">Week =</span> <span class="fu">week</span>(order_date),</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">isoWeek =</span> <span class="fu">isoweek</span>(order_date),</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">DayOfMonth =</span> <span class="fu">mday</span>(order_date),</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">DayOfWeek =</span> <span class="fu">wday</span>(order_date),</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">DayName =</span> <span class="fu">wday</span>(order_date, <span class="at">label =</span> <span class="cn">TRUE</span>, <span class="at">abbr =</span> <span class="cn">FALSE</span>),</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">DayOfYr =</span> <span class="fu">yday</span>(order_date),</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">quarter =</span> <span class="fu">quarter</span>(order_date),</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="fu">year</span>(order_date)</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Glimpse only the new columns</span></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(<span class="fu">select</span>(df2, MonthName,MonthNumber, Day, Week, isoWeek, DayOfMonth, DayOfWeek, DayName, DayOfYr, quarter, year))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>Rows: 286,392
-Columns: 11
-$ MonthName   &lt;ord&gt; October, October, October, October, November, November, No…
-$ MonthNumber &lt;dbl&gt; 10, 10, 10, 10, 11, 11, 11, 10, 10, 10, 10, 10, 12, 12, 12…
-$ Day         &lt;int&gt; 1, 1, 1, 1, 13, 13, 13, 1, 1, 1, 8, 21, 24, 24, 24, 24, 24…
-$ Week        &lt;dbl&gt; 40, 40, 40, 40, 46, 46, 46, 40, 40, 40, 41, 43, 52, 52, 52…
-$ isoWeek     &lt;dbl&gt; 40, 40, 40, 40, 46, 46, 46, 40, 40, 40, 41, 43, 52, 52, 52…
-$ DayOfMonth  &lt;int&gt; 1, 1, 1, 1, 13, 13, 13, 1, 1, 1, 8, 21, 24, 24, 24, 24, 24…
-$ DayOfWeek   &lt;dbl&gt; 5, 5, 5, 5, 6, 6, 6, 5, 5, 5, 5, 4, 5, 5, 5, 5, 5, 5, 5, 5…
-$ DayName     &lt;ord&gt; Thursday, Thursday, Thursday, Thursday, Friday, Friday, Fr…
-$ DayOfYr     &lt;dbl&gt; 275, 275, 275, 275, 318, 318, 318, 275, 275, 275, 282, 295…
-$ quarter     &lt;int&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4…
-$ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020…</code></pre>
-</div>
-</div>
-<ul>
-<li><strong>Let us subset the data frame</strong></li>
-</ul>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>Data <span class="ot">&lt;-</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(df2,</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a> order_id, order_date, status, item_id, sku, qty_ordered, price, value, discount_amount, total, category, payment_method, cust_id, Gender, age, full_name,<span class="st">`</span><span class="at">Place Name</span><span class="st">`</span>, County, City, State, Region, Discount_Percent, MonthName,MonthNumber, Day, Week, isoWeek, DayOfMonth, DayOfWeek, DayName, DayOfYr, quarter, year)</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="fu">gt</span>(<span class="fu">head</span>(Data))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>Data <span class="ot">&lt;-</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(df2,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a> order_date, status, item_id, sku, qty_ordered, price, value, discount_amount, total, category, payment_method, Gender, age, full_name,<span class="st">`</span><span class="at">Place Name</span><span class="st">`</span>, County, City, State, Region, Discount_Percent)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">gt</span>(<span class="fu">head</span>(Data))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
-<div id="pftssnusgl" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#pftssnusgl table {
+<div id="ovxqopllgu" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#ovxqopllgu table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#pftssnusgl thead, #pftssnusgl tbody, #pftssnusgl tfoot, #pftssnusgl tr, #pftssnusgl td, #pftssnusgl th {
+#ovxqopllgu thead, #ovxqopllgu tbody, #ovxqopllgu tfoot, #ovxqopllgu tr, #ovxqopllgu td, #ovxqopllgu th {
   border-style: none;
 }
 
-#pftssnusgl p {
+#ovxqopllgu p {
   margin: 0;
   padding: 0;
 }
 
-#pftssnusgl .gt_table {
+#ovxqopllgu .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -349,12 +257,12 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
   border-left-color: #D3D3D3;
 }
 
-#pftssnusgl .gt_caption {
+#ovxqopllgu .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#pftssnusgl .gt_title {
+#ovxqopllgu .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -366,7 +274,7 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
   border-bottom-width: 0;
 }
 
-#pftssnusgl .gt_subtitle {
+#ovxqopllgu .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -378,7 +286,7 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
   border-top-width: 0;
 }
 
-#pftssnusgl .gt_heading {
+#ovxqopllgu .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -390,13 +298,13 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
   border-right-color: #D3D3D3;
 }
 
-#pftssnusgl .gt_bottom_border {
+#ovxqopllgu .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#pftssnusgl .gt_col_headings {
+#ovxqopllgu .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -411,7 +319,7 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
   border-right-color: #D3D3D3;
 }
 
-#pftssnusgl .gt_col_heading {
+#ovxqopllgu .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -431,7 +339,7 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
   overflow-x: hidden;
 }
 
-#pftssnusgl .gt_column_spanner_outer {
+#ovxqopllgu .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -443,15 +351,15 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
   padding-right: 4px;
 }
 
-#pftssnusgl .gt_column_spanner_outer:first-child {
+#ovxqopllgu .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#pftssnusgl .gt_column_spanner_outer:last-child {
+#ovxqopllgu .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#pftssnusgl .gt_column_spanner {
+#ovxqopllgu .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -463,11 +371,11 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
   width: 100%;
 }
 
-#pftssnusgl .gt_spanner_row {
+#ovxqopllgu .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#pftssnusgl .gt_group_heading {
+#ovxqopllgu .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -493,7 +401,7 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
   text-align: left;
 }
 
-#pftssnusgl .gt_empty_group_heading {
+#ovxqopllgu .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -508,15 +416,15 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
   vertical-align: middle;
 }
 
-#pftssnusgl .gt_from_md > :first-child {
+#ovxqopllgu .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#pftssnusgl .gt_from_md > :last-child {
+#ovxqopllgu .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#pftssnusgl .gt_row {
+#ovxqopllgu .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -535,7 +443,7 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
   overflow-x: hidden;
 }
 
-#pftssnusgl .gt_stub {
+#ovxqopllgu .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -548,7 +456,7 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
   padding-right: 5px;
 }
 
-#pftssnusgl .gt_stub_row_group {
+#ovxqopllgu .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -562,15 +470,15 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
   vertical-align: top;
 }
 
-#pftssnusgl .gt_row_group_first td {
+#ovxqopllgu .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#pftssnusgl .gt_row_group_first th {
+#ovxqopllgu .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#pftssnusgl .gt_summary_row {
+#ovxqopllgu .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -580,16 +488,16 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
   padding-right: 5px;
 }
 
-#pftssnusgl .gt_first_summary_row {
+#ovxqopllgu .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#pftssnusgl .gt_first_summary_row.thick {
+#ovxqopllgu .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#pftssnusgl .gt_last_summary_row {
+#ovxqopllgu .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -599,7 +507,7 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
   border-bottom-color: #D3D3D3;
 }
 
-#pftssnusgl .gt_grand_summary_row {
+#ovxqopllgu .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -609,7 +517,7 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
   padding-right: 5px;
 }
 
-#pftssnusgl .gt_first_grand_summary_row {
+#ovxqopllgu .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -619,7 +527,7 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
   border-top-color: #D3D3D3;
 }
 
-#pftssnusgl .gt_last_grand_summary_row_top {
+#ovxqopllgu .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -629,11 +537,11 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
   border-bottom-color: #D3D3D3;
 }
 
-#pftssnusgl .gt_striped {
+#ovxqopllgu .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#pftssnusgl .gt_table_body {
+#ovxqopllgu .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -642,7 +550,7 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
   border-bottom-color: #D3D3D3;
 }
 
-#pftssnusgl .gt_footnotes {
+#ovxqopllgu .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -656,7 +564,7 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
   border-right-color: #D3D3D3;
 }
 
-#pftssnusgl .gt_footnote {
+#ovxqopllgu .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -665,7 +573,7 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
   padding-right: 5px;
 }
 
-#pftssnusgl .gt_sourcenotes {
+#ovxqopllgu .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -679,7 +587,7 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
   border-right-color: #D3D3D3;
 }
 
-#pftssnusgl .gt_sourcenote {
+#ovxqopllgu .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -687,63 +595,63 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
   padding-right: 5px;
 }
 
-#pftssnusgl .gt_left {
+#ovxqopllgu .gt_left {
   text-align: left;
 }
 
-#pftssnusgl .gt_center {
+#ovxqopllgu .gt_center {
   text-align: center;
 }
 
-#pftssnusgl .gt_right {
+#ovxqopllgu .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#pftssnusgl .gt_font_normal {
+#ovxqopllgu .gt_font_normal {
   font-weight: normal;
 }
 
-#pftssnusgl .gt_font_bold {
+#ovxqopllgu .gt_font_bold {
   font-weight: bold;
 }
 
-#pftssnusgl .gt_font_italic {
+#ovxqopllgu .gt_font_italic {
   font-style: italic;
 }
 
-#pftssnusgl .gt_super {
+#ovxqopllgu .gt_super {
   font-size: 65%;
 }
 
-#pftssnusgl .gt_footnote_marks {
+#ovxqopllgu .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#pftssnusgl .gt_asterisk {
+#ovxqopllgu .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#pftssnusgl .gt_indent_1 {
+#ovxqopllgu .gt_indent_1 {
   text-indent: 5px;
 }
 
-#pftssnusgl .gt_indent_2 {
+#ovxqopllgu .gt_indent_2 {
   text-indent: 10px;
 }
 
-#pftssnusgl .gt_indent_3 {
+#ovxqopllgu .gt_indent_3 {
   text-indent: 15px;
 }
 
-#pftssnusgl .gt_indent_4 {
+#ovxqopllgu .gt_indent_4 {
   text-indent: 20px;
 }
 
-#pftssnusgl .gt_indent_5 {
+#ovxqopllgu .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -751,7 +659,6 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
 <table class="gt_table table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
 <thead>
 <tr class="header gt_col_headings">
-<th id="order_id" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">order_id</th>
 <th id="order_date" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">order_date</th>
 <th id="status" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">status</th>
 <th id="item_id" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">item_id</th>
@@ -763,7 +670,6 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
 <th id="total" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">total</th>
 <th id="category" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">category</th>
 <th id="payment_method" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">payment_method</th>
-<th id="cust_id" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">cust_id</th>
 <th id="Gender" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Gender</th>
 <th id="age" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">age</th>
 <th id="full_name" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">full_name</th>
@@ -773,22 +679,10 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
 <th id="State" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">State</th>
 <th id="Region" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Region</th>
 <th id="Discount_Percent" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Discount_Percent</th>
-<th id="MonthName" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">MonthName</th>
-<th id="MonthNumber" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">MonthNumber</th>
-<th id="Day" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Day</th>
-<th id="Week" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Week</th>
-<th id="isoWeek" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">isoWeek</th>
-<th id="DayOfMonth" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">DayOfMonth</th>
-<th id="DayOfWeek" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">DayOfWeek</th>
-<th id="DayName" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">DayName</th>
-<th id="DayOfYr" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">DayOfYr</th>
-<th id="quarter" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">quarter</th>
-<th id="year" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">year</th>
 </tr>
 </thead>
 <tbody class="gt_table_body">
 <tr class="odd">
-<td class="gt_row gt_right" headers="order_id">100354678</td>
 <td class="gt_row gt_right" headers="order_date">2020-10-01</td>
 <td class="gt_row gt_left" headers="status">received</td>
 <td class="gt_row gt_right" headers="item_id">574772</td>
@@ -800,7 +694,6 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
 <td class="gt_row gt_right" headers="total">1798.0</td>
 <td class="gt_row gt_left" headers="category">Men's Fashion</td>
 <td class="gt_row gt_left" headers="payment_method">cod</td>
-<td class="gt_row gt_right" headers="cust_id">60124</td>
 <td class="gt_row gt_left" headers="Gender">F</td>
 <td class="gt_row gt_right" headers="age">43</td>
 <td class="gt_row gt_left" headers="full_name">Titus, Jani</td>
@@ -810,20 +703,8 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
 <td class="gt_row gt_left" headers="State">OK</td>
 <td class="gt_row gt_left" headers="Region">South</td>
 <td class="gt_row gt_right" headers="Discount_Percent">0</td>
-<td class="gt_row gt_center" headers="MonthName">October</td>
-<td class="gt_row gt_right" headers="MonthNumber">10</td>
-<td class="gt_row gt_right" headers="Day">1</td>
-<td class="gt_row gt_right" headers="Week">40</td>
-<td class="gt_row gt_right" headers="isoWeek">40</td>
-<td class="gt_row gt_right" headers="DayOfMonth">1</td>
-<td class="gt_row gt_right" headers="DayOfWeek">5</td>
-<td class="gt_row gt_center" headers="DayName">Thursday</td>
-<td class="gt_row gt_right" headers="DayOfYr">275</td>
-<td class="gt_row gt_right" headers="quarter">4</td>
-<td class="gt_row gt_right" headers="year">2020</td>
 </tr>
 <tr class="even">
-<td class="gt_row gt_right" headers="order_id">100354678</td>
 <td class="gt_row gt_right" headers="order_date">2020-10-01</td>
 <td class="gt_row gt_left" headers="status">received</td>
 <td class="gt_row gt_right" headers="item_id">574774</td>
@@ -835,7 +716,6 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
 <td class="gt_row gt_right" headers="total">190.0</td>
 <td class="gt_row gt_left" headers="category">Men's Fashion</td>
 <td class="gt_row gt_left" headers="payment_method">cod</td>
-<td class="gt_row gt_right" headers="cust_id">60124</td>
 <td class="gt_row gt_left" headers="Gender">F</td>
 <td class="gt_row gt_right" headers="age">43</td>
 <td class="gt_row gt_left" headers="full_name">Titus, Jani</td>
@@ -845,20 +725,8 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
 <td class="gt_row gt_left" headers="State">OK</td>
 <td class="gt_row gt_left" headers="Region">South</td>
 <td class="gt_row gt_right" headers="Discount_Percent">0</td>
-<td class="gt_row gt_center" headers="MonthName">October</td>
-<td class="gt_row gt_right" headers="MonthNumber">10</td>
-<td class="gt_row gt_right" headers="Day">1</td>
-<td class="gt_row gt_right" headers="Week">40</td>
-<td class="gt_row gt_right" headers="isoWeek">40</td>
-<td class="gt_row gt_right" headers="DayOfMonth">1</td>
-<td class="gt_row gt_right" headers="DayOfWeek">5</td>
-<td class="gt_row gt_center" headers="DayName">Thursday</td>
-<td class="gt_row gt_right" headers="DayOfYr">275</td>
-<td class="gt_row gt_right" headers="quarter">4</td>
-<td class="gt_row gt_right" headers="year">2020</td>
 </tr>
 <tr class="odd">
-<td class="gt_row gt_right" headers="order_id">100354680</td>
 <td class="gt_row gt_right" headers="order_date">2020-10-01</td>
 <td class="gt_row gt_left" headers="status">complete</td>
 <td class="gt_row gt_right" headers="item_id">574777</td>
@@ -870,7 +738,6 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
 <td class="gt_row gt_right" headers="total">1199.2</td>
 <td class="gt_row gt_left" headers="category">Men's Fashion</td>
 <td class="gt_row gt_left" headers="payment_method">cod</td>
-<td class="gt_row gt_right" headers="cust_id">60124</td>
 <td class="gt_row gt_left" headers="Gender">F</td>
 <td class="gt_row gt_right" headers="age">43</td>
 <td class="gt_row gt_left" headers="full_name">Titus, Jani</td>
@@ -880,20 +747,8 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
 <td class="gt_row gt_left" headers="State">OK</td>
 <td class="gt_row gt_left" headers="Region">South</td>
 <td class="gt_row gt_right" headers="Discount_Percent">0</td>
-<td class="gt_row gt_center" headers="MonthName">October</td>
-<td class="gt_row gt_right" headers="MonthNumber">10</td>
-<td class="gt_row gt_right" headers="Day">1</td>
-<td class="gt_row gt_right" headers="Week">40</td>
-<td class="gt_row gt_right" headers="isoWeek">40</td>
-<td class="gt_row gt_right" headers="DayOfMonth">1</td>
-<td class="gt_row gt_right" headers="DayOfWeek">5</td>
-<td class="gt_row gt_center" headers="DayName">Thursday</td>
-<td class="gt_row gt_right" headers="DayOfYr">275</td>
-<td class="gt_row gt_right" headers="quarter">4</td>
-<td class="gt_row gt_right" headers="year">2020</td>
 </tr>
 <tr class="even">
-<td class="gt_row gt_right" headers="order_id">100354680</td>
 <td class="gt_row gt_right" headers="order_date">2020-10-01</td>
 <td class="gt_row gt_left" headers="status">complete</td>
 <td class="gt_row gt_right" headers="item_id">574779</td>
@@ -905,7 +760,6 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
 <td class="gt_row gt_right" headers="total">639.2</td>
 <td class="gt_row gt_left" headers="category">Men's Fashion</td>
 <td class="gt_row gt_left" headers="payment_method">cod</td>
-<td class="gt_row gt_right" headers="cust_id">60124</td>
 <td class="gt_row gt_left" headers="Gender">F</td>
 <td class="gt_row gt_right" headers="age">43</td>
 <td class="gt_row gt_left" headers="full_name">Titus, Jani</td>
@@ -915,20 +769,8 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
 <td class="gt_row gt_left" headers="State">OK</td>
 <td class="gt_row gt_left" headers="Region">South</td>
 <td class="gt_row gt_right" headers="Discount_Percent">0</td>
-<td class="gt_row gt_center" headers="MonthName">October</td>
-<td class="gt_row gt_right" headers="MonthNumber">10</td>
-<td class="gt_row gt_right" headers="Day">1</td>
-<td class="gt_row gt_right" headers="Week">40</td>
-<td class="gt_row gt_right" headers="isoWeek">40</td>
-<td class="gt_row gt_right" headers="DayOfMonth">1</td>
-<td class="gt_row gt_right" headers="DayOfWeek">5</td>
-<td class="gt_row gt_center" headers="DayName">Thursday</td>
-<td class="gt_row gt_right" headers="DayOfYr">275</td>
-<td class="gt_row gt_right" headers="quarter">4</td>
-<td class="gt_row gt_right" headers="year">2020</td>
 </tr>
 <tr class="odd">
-<td class="gt_row gt_right" headers="order_id">100367357</td>
 <td class="gt_row gt_right" headers="order_date">2020-11-13</td>
 <td class="gt_row gt_left" headers="status">received</td>
 <td class="gt_row gt_right" headers="item_id">595185</td>
@@ -940,7 +782,6 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
 <td class="gt_row gt_right" headers="total">99.9</td>
 <td class="gt_row gt_left" headers="category">Men's Fashion</td>
 <td class="gt_row gt_left" headers="payment_method">cod</td>
-<td class="gt_row gt_right" headers="cust_id">60124</td>
 <td class="gt_row gt_left" headers="Gender">F</td>
 <td class="gt_row gt_right" headers="age">43</td>
 <td class="gt_row gt_left" headers="full_name">Titus, Jani</td>
@@ -950,20 +791,8 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
 <td class="gt_row gt_left" headers="State">OK</td>
 <td class="gt_row gt_left" headers="Region">South</td>
 <td class="gt_row gt_right" headers="Discount_Percent">0</td>
-<td class="gt_row gt_center" headers="MonthName">November</td>
-<td class="gt_row gt_right" headers="MonthNumber">11</td>
-<td class="gt_row gt_right" headers="Day">13</td>
-<td class="gt_row gt_right" headers="Week">46</td>
-<td class="gt_row gt_right" headers="isoWeek">46</td>
-<td class="gt_row gt_right" headers="DayOfMonth">13</td>
-<td class="gt_row gt_right" headers="DayOfWeek">6</td>
-<td class="gt_row gt_center" headers="DayName">Friday</td>
-<td class="gt_row gt_right" headers="DayOfYr">318</td>
-<td class="gt_row gt_right" headers="quarter">4</td>
-<td class="gt_row gt_right" headers="year">2020</td>
 </tr>
 <tr class="even">
-<td class="gt_row gt_right" headers="order_id">100367357</td>
 <td class="gt_row gt_right" headers="order_date">2020-11-13</td>
 <td class="gt_row gt_left" headers="status">received</td>
 <td class="gt_row gt_right" headers="item_id">595186</td>
@@ -975,7 +804,6 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
 <td class="gt_row gt_right" headers="total">39.9</td>
 <td class="gt_row gt_left" headers="category">Men's Fashion</td>
 <td class="gt_row gt_left" headers="payment_method">cod</td>
-<td class="gt_row gt_right" headers="cust_id">60124</td>
 <td class="gt_row gt_left" headers="Gender">F</td>
 <td class="gt_row gt_right" headers="age">43</td>
 <td class="gt_row gt_left" headers="full_name">Titus, Jani</td>
@@ -985,17 +813,6 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
 <td class="gt_row gt_left" headers="State">OK</td>
 <td class="gt_row gt_left" headers="Region">South</td>
 <td class="gt_row gt_right" headers="Discount_Percent">0</td>
-<td class="gt_row gt_center" headers="MonthName">November</td>
-<td class="gt_row gt_right" headers="MonthNumber">11</td>
-<td class="gt_row gt_right" headers="Day">13</td>
-<td class="gt_row gt_right" headers="Week">46</td>
-<td class="gt_row gt_right" headers="isoWeek">46</td>
-<td class="gt_row gt_right" headers="DayOfMonth">13</td>
-<td class="gt_row gt_right" headers="DayOfWeek">6</td>
-<td class="gt_row gt_center" headers="DayName">Friday</td>
-<td class="gt_row gt_right" headers="DayOfYr">318</td>
-<td class="gt_row gt_right" headers="quarter">4</td>
-<td class="gt_row gt_right" headers="year">2020</td>
 </tr>
 </tbody>
 </table>
@@ -1005,15 +822,14 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
 </div>
 </div>
 </section>
-</section>
 <section id="exploratory-data-analysis-eda" class="level1">
 <h1>2. Exploratory Data Analysis (EDA)</h1>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(skimr)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">skim</span>(Data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(skimr)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">skim</span>(Data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <table class="table table-sm table-striped small">
@@ -1029,7 +845,7 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Number of columns</td>
-<td style="text-align: left;">33</td>
+<td style="text-align: left;">22</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">_______________________</td>
@@ -1048,18 +864,14 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
 <td style="text-align: left;">1</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">factor</td>
-<td style="text-align: left;">2</td>
+<td style="text-align: left;">numeric</td>
+<td style="text-align: left;">10</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">numeric</td>
-<td style="text-align: left;">19</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;">________________________</td>
 <td style="text-align: left;"></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">Group variables</td>
 <td style="text-align: left;">None</td>
 </tr>
@@ -1236,45 +1048,6 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
 </tr>
 </tbody>
 </table>
-<p><strong>Variable type: factor</strong></p>
-<table class="table table-sm table-striped small">
-<colgroup>
-<col style="width: 13%">
-<col style="width: 9%">
-<col style="width: 13%">
-<col style="width: 7%">
-<col style="width: 8%">
-<col style="width: 46%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">skim_variable</th>
-<th style="text-align: right;">n_missing</th>
-<th style="text-align: right;">complete_rate</th>
-<th style="text-align: left;">ordered</th>
-<th style="text-align: right;">n_unique</th>
-<th style="text-align: left;">top_counts</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">MonthName</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">TRUE</td>
-<td style="text-align: right;">12</td>
-<td style="text-align: left;">Dec: 82528, Apr: 42138, Mar: 26852, Jun: 26804</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">DayName</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">TRUE</td>
-<td style="text-align: right;">7</td>
-<td style="text-align: left;">Sun: 68599, Thu: 40087, Sat: 39540, Fri: 37432</td>
-</tr>
-</tbody>
-</table>
 <p><strong>Variable type: numeric</strong></p>
 <table class="table table-sm table-striped small">
 <colgroup>
@@ -1436,125 +1209,75 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
 <td style="text-align: right;">75.00</td>
 <td style="text-align: left;">▇▂▁▁▁</td>
 </tr>
-<tr class="odd">
-<td style="text-align: left;">MonthNumber</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">7.36</td>
-<td style="text-align: right;">3.84</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">4.0</td>
-<td style="text-align: right;">7.00</td>
-<td style="text-align: right;">12.00</td>
-<td style="text-align: right;">12.00</td>
-<td style="text-align: left;">▃▅▃▂▇</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Day</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">18.13</td>
-<td style="text-align: right;">8.65</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">12.0</td>
-<td style="text-align: right;">20.00</td>
-<td style="text-align: right;">26.00</td>
-<td style="text-align: right;">31.00</td>
-<td style="text-align: left;">▅▅▅▇▇</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Week</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">30.57</td>
-<td style="text-align: right;">17.05</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">16.0</td>
-<td style="text-align: right;">28.00</td>
-<td style="text-align: right;">51.00</td>
-<td style="text-align: right;">53.00</td>
-<td style="text-align: left;">▃▆▃▂▇</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">isoWeek</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">30.87</td>
-<td style="text-align: right;">17.27</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">15.0</td>
-<td style="text-align: right;">28.00</td>
-<td style="text-align: right;">51.00</td>
-<td style="text-align: right;">53.00</td>
-<td style="text-align: left;">▃▅▃▂▇</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">DayOfMonth</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">18.13</td>
-<td style="text-align: right;">8.65</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">12.0</td>
-<td style="text-align: right;">20.00</td>
-<td style="text-align: right;">26.00</td>
-<td style="text-align: right;">31.00</td>
-<td style="text-align: left;">▅▅▅▇▇</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">DayOfWeek</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">3.74</td>
-<td style="text-align: right;">2.15</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">2.0</td>
-<td style="text-align: right;">4.00</td>
-<td style="text-align: right;">6.00</td>
-<td style="text-align: right;">7.00</td>
-<td style="text-align: left;">▇▂▂▃▆</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">DayOfYr</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">211.00</td>
-<td style="text-align: right;">119.62</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">107.0</td>
-<td style="text-align: right;">190.00</td>
-<td style="text-align: right;">355.00</td>
-<td style="text-align: right;">366.00</td>
-<td style="text-align: left;">▂▆▃▂▇</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">quarter</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">2.71</td>
-<td style="text-align: right;">1.16</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">2.0</td>
-<td style="text-align: right;">3.00</td>
-<td style="text-align: right;">4.00</td>
-<td style="text-align: right;">4.00</td>
-<td style="text-align: left;">▃▆▁▃▇</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">year</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">2020.62</td>
-<td style="text-align: right;">0.49</td>
-<td style="text-align: right;">2020</td>
-<td style="text-align: right;">2020.0</td>
-<td style="text-align: right;">2021.00</td>
-<td style="text-align: right;">2021.00</td>
-<td style="text-align: right;">2021.00</td>
-<td style="text-align: left;">▅▁▁▁▇</td>
-</tr>
 </tbody>
 </table>
+</div>
+</div>
+<ul>
+<li><p><strong>Typical problems revealed by data summaries</strong></p></li>
+<li><p><strong>Add period features (year, Quarter, month, week and days)</strong></p></li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>Data <span class="ot">&lt;-</span> Data <span class="sc">|&gt;</span> </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Month =</span> <span class="fu">month</span>(order_date),</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">MonthName =</span> <span class="fu">month</span>(order_date, <span class="at">label =</span> <span class="cn">TRUE</span>, <span class="at">abbr =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">MonthNumber =</span> <span class="fu">month</span>(order_date),</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">Day =</span> <span class="fu">day</span>(order_date),</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">Week =</span> <span class="fu">week</span>(order_date),</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">isoWeek =</span> <span class="fu">isoweek</span>(order_date),</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">DayOfMonth =</span> <span class="fu">mday</span>(order_date),</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">DayOfWeek =</span> <span class="fu">wday</span>(order_date),</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">DayName =</span> <span class="fu">wday</span>(order_date, <span class="at">label =</span> <span class="cn">TRUE</span>, <span class="at">abbr =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">DayOfYr =</span> <span class="fu">yday</span>(order_date),</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">quarter =</span> <span class="fu">quarter</span>(order_date),</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="fu">year</span>(order_date)</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Glimpse of columns</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(Data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 286,392
+Columns: 34
+$ order_id         &lt;dbl&gt; 100354678, 100354678, 100354680, 100354680, 100367357…
+$ order_date       &lt;date&gt; 2020-10-01, 2020-10-01, 2020-10-01, 2020-10-01, 2020…
+$ status           &lt;chr&gt; "received", "received", "complete", "complete", "rece…
+$ item_id          &lt;dbl&gt; 574772, 574774, 574777, 574779, 595185, 595186, 59519…
+$ sku              &lt;chr&gt; "oasis_Oasis-064-36", "Fantastic_FT-48", "mdeal_DMC-6…
+$ qty_ordered      &lt;dbl&gt; 21, 11, 9, 9, 2, 2, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2, 2, …
+$ price            &lt;dbl&gt; 89.9, 19.0, 149.9, 79.9, 99.9, 39.9, 47.6, 49.0, 135.…
+$ value            &lt;dbl&gt; 1798.0, 190.0, 1199.2, 639.2, 99.9, 39.9, 47.6, 49.0,…
+$ discount_amount  &lt;dbl&gt; 0.00000, 0.00000, 0.00000, 0.00000, 0.00000, 0.00000,…
+$ total            &lt;dbl&gt; 1798.00000, 190.00000, 1199.20000, 639.20000, 99.9000…
+$ category         &lt;chr&gt; "Men's Fashion", "Men's Fashion", "Men's Fashion", "M…
+$ payment_method   &lt;chr&gt; "cod", "cod", "cod", "cod", "cod", "cod", "cod", "Pay…
+$ cust_id          &lt;dbl&gt; 60124, 60124, 60124, 60124, 60124, 60124, 60124, 4248…
+$ Gender           &lt;chr&gt; "F", "F", "F", "F", "F", "F", "F", "M", "M", "M", "M"…
+$ age              &lt;dbl&gt; 43, 43, 43, 43, 43, 43, 43, 28, 28, 28, 28, 28, 28, 2…
+$ full_name        &lt;chr&gt; "Titus, Jani", "Titus, Jani", "Titus, Jani", "Titus, …
+$ `Place Name`     &lt;chr&gt; "Vinson", "Vinson", "Vinson", "Vinson", "Vinson", "Vi…
+$ County           &lt;chr&gt; "Harmon", "Harmon", "Harmon", "Harmon", "Harmon", "Ha…
+$ City             &lt;chr&gt; "Vinson", "Vinson", "Vinson", "Vinson", "Vinson", "Vi…
+$ State            &lt;chr&gt; "OK", "OK", "OK", "OK", "OK", "OK", "OK", "FL", "FL",…
+$ Region           &lt;chr&gt; "South", "South", "South", "South", "South", "South",…
+$ Discount_Percent &lt;dbl&gt; 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.0…
+$ Month            &lt;dbl&gt; 10, 10, 10, 10, 11, 11, 11, 10, 10, 10, 10, 10, 12, 1…
+$ MonthName        &lt;ord&gt; October, October, October, October, November, Novembe…
+$ MonthNumber      &lt;dbl&gt; 10, 10, 10, 10, 11, 11, 11, 10, 10, 10, 10, 10, 12, 1…
+$ Day              &lt;int&gt; 1, 1, 1, 1, 13, 13, 13, 1, 1, 1, 8, 21, 24, 24, 24, 2…
+$ Week             &lt;dbl&gt; 40, 40, 40, 40, 46, 46, 46, 40, 40, 40, 41, 43, 52, 5…
+$ isoWeek          &lt;dbl&gt; 40, 40, 40, 40, 46, 46, 46, 40, 40, 40, 41, 43, 52, 5…
+$ DayOfMonth       &lt;int&gt; 1, 1, 1, 1, 13, 13, 13, 1, 1, 1, 8, 21, 24, 24, 24, 2…
+$ DayOfWeek        &lt;dbl&gt; 5, 5, 5, 5, 6, 6, 6, 5, 5, 5, 5, 4, 5, 5, 5, 5, 5, 5,…
+$ DayName          &lt;ord&gt; Thursday, Thursday, Thursday, Thursday, Friday, Frida…
+$ DayOfYr          &lt;dbl&gt; 275, 275, 275, 275, 318, 318, 318, 275, 275, 275, 282…
+$ quarter          &lt;int&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,…
+$ year             &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020,…</code></pre>
 </div>
 </div>
 </section>
@@ -1569,55 +1292,55 @@ $ year        &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>Numeric_Columns <span class="ot">&lt;-</span> Data <span class="sc">|&gt;</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(qty_ordered, price,value, discount_amount, total)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>Numeric_Columns <span class="ot">&lt;-</span> Data <span class="sc">|&gt;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(qty_ordered, price,value, discount_amount, total)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load necessary libraries</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gridExtra)</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the 2.5th and 97.5th percentiles</span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>lower_bound <span class="ot">&lt;-</span> <span class="fu">quantile</span>(Numeric_Columns<span class="sc">$</span>total, <span class="fl">0.01</span>)</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>upper_bound <span class="ot">&lt;-</span> <span class="fu">quantile</span>(Numeric_Columns<span class="sc">$</span>total, <span class="fl">0.975</span>)</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the histogram plot</span></span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>histogram_plot1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(Numeric_Columns, <span class="fu">aes</span>(<span class="at">x =</span> total)) <span class="sc">+</span></span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">30</span>, <span class="at">fill =</span> <span class="st">"lightblue"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">size =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(lower_bound, upper_bound)) <span class="sc">+</span></span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the histogram plot</span></span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>histogram_plot2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(Numeric_Columns, <span class="fu">aes</span>(<span class="at">x =</span> price)) <span class="sc">+</span></span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">30</span>, <span class="at">fill =</span> <span class="st">"lightblue"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">size =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
-<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(lower_bound, upper_bound)) <span class="sc">+</span></span>
-<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
-<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the histogram plot</span></span>
-<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>histogram_plot3 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(Numeric_Columns, <span class="fu">aes</span>(<span class="at">x =</span> value)) <span class="sc">+</span></span>
-<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">30</span>, <span class="at">fill =</span> <span class="st">"lightblue"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">size =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
-<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(lower_bound, upper_bound)) <span class="sc">+</span></span>
-<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
-<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the histogram plot</span></span>
-<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>histogram_plot4 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(Numeric_Columns, <span class="fu">aes</span>(<span class="at">x =</span> discount_amount)) <span class="sc">+</span></span>
-<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">30</span>, <span class="at">fill =</span> <span class="st">"lightblue"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">size =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
-<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(lower_bound, upper_bound)) <span class="sc">+</span></span>
-<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
-<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Arrange the plots in a grid layout</span></span>
-<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a><span class="fu">grid.arrange</span>(histogram_plot1, histogram_plot2,histogram_plot3,histogram_plot4, <span class="at">ncol =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load necessary libraries</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gridExtra)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the 2.5th and 97.5th percentiles</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>lower_bound <span class="ot">&lt;-</span> <span class="fu">quantile</span>(Numeric_Columns<span class="sc">$</span>total, <span class="fl">0.01</span>)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>upper_bound <span class="ot">&lt;-</span> <span class="fu">quantile</span>(Numeric_Columns<span class="sc">$</span>total, <span class="fl">0.975</span>)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the histogram plot</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>histogram_plot1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(Numeric_Columns, <span class="fu">aes</span>(<span class="at">x =</span> total)) <span class="sc">+</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">30</span>, <span class="at">fill =</span> <span class="st">"lightblue"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">size =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(lower_bound, upper_bound)) <span class="sc">+</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the histogram plot</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>histogram_plot2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(Numeric_Columns, <span class="fu">aes</span>(<span class="at">x =</span> price)) <span class="sc">+</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">30</span>, <span class="at">fill =</span> <span class="st">"lightblue"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">size =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(lower_bound, upper_bound)) <span class="sc">+</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the histogram plot</span></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>histogram_plot3 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(Numeric_Columns, <span class="fu">aes</span>(<span class="at">x =</span> value)) <span class="sc">+</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">30</span>, <span class="at">fill =</span> <span class="st">"lightblue"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">size =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(lower_bound, upper_bound)) <span class="sc">+</span></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the histogram plot</span></span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>histogram_plot4 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(Numeric_Columns, <span class="fu">aes</span>(<span class="at">x =</span> discount_amount)) <span class="sc">+</span></span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">30</span>, <span class="at">fill =</span> <span class="st">"lightblue"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">size =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(lower_bound, upper_bound)) <span class="sc">+</span></span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Arrange the plots in a grid layout</span></span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a><span class="fu">grid.arrange</span>(histogram_plot1, histogram_plot2,histogram_plot3,histogram_plot4, <span class="at">ncol =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Sales-Analysis_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Sales-Analysis_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -2263,351 +1986,330 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="sourceCode" id="cb14" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "DATA ANALYSIS WITH R"</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "(A Step-by-step Statistical Approach)" </span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span><span class="co"> html</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="an">code-fold:</span><span class="co"> true</span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="an">code-tools:</span><span class="co"> true</span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span><span class="co"> </span></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="co">  cache: true</span></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false </span></span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="fu"># Introduction</span></span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>This project outlines the steps for analyzing data on sales, profit and tax It includes recommended statistical analyses for both numerical and categorical variables.</span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>By employing suitable statistical analyses, we gave valuable insights into the relationships between sales, profit and tax This information can be used to optimize ***pricing strategies***, ***improve sales performance*** and ***make informed business decisions***.</span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="fu"># Considerations</span></span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Choose the statistical analysis appropriate for the data type (numerical vs. categorical).</span>
-<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Consider normality assumptions for specific tests and address them through transformation if necessary.</span>
-<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Utilize visualization techniques throughout the analysis to effectively communicate insights.</span>
-<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a><span class="fu"># 1. Data Preparation</span></span>
-<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a><span class="fu">## - Cleaning:</span></span>
-<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>Ensure data accuracy by checking for missing values, outliers and inconsistencies.</span>
-<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Data types**</span>
-<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>This project outlines the steps for analyzing data on sales, profit and tax It includes </span>
-<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>recommended statistical analyses for both numerical and categorical variables.</span>
-<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>By employing suitable statistical analyses, we gave valuable insights into the relationships between sales, profit and tax This information can be used to optimize **_pricing strategies_**, **_improve sales performance_** and **_make informed business decisions_**. </span>
-<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a><span class="fu"># Considerations</span></span>
-<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>Choose the statistical analysis appropriate for the data type (numerical vs. categorical). </span>
-<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>Consider normality assumptions for specific tests and address them through </span>
-<span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a>transformation if necessary. </span>
-<span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>Utilize visualization techniques throughout the analysis to effectively communicate </span>
-<span id="cb14-43"><a href="#cb14-43" aria-hidden="true" tabindex="-1"></a>insights. </span>
-<span id="cb14-44"><a href="#cb14-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-45"><a href="#cb14-45" aria-hidden="true" tabindex="-1"></a><span class="fu"># 1. Data Preparation </span></span>
-<span id="cb14-46"><a href="#cb14-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-47"><a href="#cb14-47" aria-hidden="true" tabindex="-1"></a><span class="fu">## - Cleaning:</span></span>
-<span id="cb14-48"><a href="#cb14-48" aria-hidden="true" tabindex="-1"></a>Ensure data accuracy by checking for missing values, outliers and inconsistencies.</span>
-<span id="cb14-49"><a href="#cb14-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-50"><a href="#cb14-50" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>**Data types**</span>
-<span id="cb14-51"><a href="#cb14-51" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, warning=FALSE}</span></span>
-<span id="cb14-52"><a href="#cb14-52" aria-hidden="true" tabindex="-1"></a><span class="in">library(dplyr)</span></span>
-<span id="cb14-53"><a href="#cb14-53" aria-hidden="true" tabindex="-1"></a><span class="in">library(gt)</span></span>
-<span id="cb14-54"><a href="#cb14-54" aria-hidden="true" tabindex="-1"></a><span class="in">library(readr)</span></span>
-<span id="cb14-55"><a href="#cb14-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-56"><a href="#cb14-56" aria-hidden="true" tabindex="-1"></a><span class="in"># Load the file using readr</span></span>
-<span id="cb14-57"><a href="#cb14-57" aria-hidden="true" tabindex="-1"></a><span class="in">df &lt;- read_csv("C:/Data/Projects/R-DataScience/Sales Analysis/Amazon Sales FY2020-21.csv")</span></span>
-<span id="cb14-58"><a href="#cb14-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-59"><a href="#cb14-59" aria-hidden="true" tabindex="-1"></a><span class="in"># View the data types </span></span>
-<span id="cb14-60"><a href="#cb14-60" aria-hidden="true" tabindex="-1"></a><span class="in">glimpse(df)</span></span>
-<span id="cb14-61"><a href="#cb14-61" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-62"><a href="#cb14-62" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb14-63"><a href="#cb14-63" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-64"><a href="#cb14-64" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Data types conversion**</span>
-<span id="cb14-65"><a href="#cb14-65" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-66"><a href="#cb14-66" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>**Data types conversion** </span>
-<span id="cb14-67"><a href="#cb14-67" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-68"><a href="#cb14-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-71"><a href="#cb14-71" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb14-72"><a href="#cb14-72" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
-<span id="cb14-73"><a href="#cb14-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-74"><a href="#cb14-74" aria-hidden="true" tabindex="-1"></a>df2 <span class="ot">&lt;-</span> df</span>
-<span id="cb14-75"><a href="#cb14-75" aria-hidden="true" tabindex="-1"></a> df2<span class="sc">$</span>order_date <span class="ot">=</span> <span class="fu">dmy</span>(df2<span class="sc">$</span>order_date)</span>
-<span id="cb14-76"><a href="#cb14-76" aria-hidden="true" tabindex="-1"></a> </span>
-<span id="cb14-77"><a href="#cb14-77" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(df2<span class="sc">$</span>order_date)</span>
-<span id="cb14-78"><a href="#cb14-78" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-79"><a href="#cb14-79" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb14-80"><a href="#cb14-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-81"><a href="#cb14-81" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Missing Values**</span>
-<span id="cb14-82"><a href="#cb14-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-85"><a href="#cb14-85" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb14-86"><a href="#cb14-86" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the total number of null values in each column</span></span>
-<span id="cb14-87"><a href="#cb14-87" aria-hidden="true" tabindex="-1"></a><span class="fu">sapply</span>(df2, <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x)))</span>
-<span id="cb14-88"><a href="#cb14-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-89"><a href="#cb14-89" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb14-90"><a href="#cb14-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-91"><a href="#cb14-91" aria-hidden="true" tabindex="-1"></a><span class="fu">## - Derive New Variables:</span></span>
-<span id="cb14-92"><a href="#cb14-92" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-93"><a href="#cb14-93" aria-hidden="true" tabindex="-1"></a>Calculate metrics such as profit margin (profit / sales) and period features. </span>
-<span id="cb14-94"><a href="#cb14-94" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>**Merge Columns**</span>
-<span id="cb14-95"><a href="#cb14-95" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-98"><a href="#cb14-98" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb14-99"><a href="#cb14-99" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb14-100"><a href="#cb14-100" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-101"><a href="#cb14-101" aria-hidden="true" tabindex="-1"></a>df2<span class="sc">$</span>Name <span class="ot">&lt;-</span> <span class="fu">paste</span>(df2<span class="sc">$</span><span class="st">`</span><span class="at">First Name</span><span class="st">`</span>, df2<span class="sc">$</span><span class="st">`</span><span class="at">Last Name</span><span class="st">`</span>, <span class="at">sep =</span> <span class="st">" "</span>)</span>
-<span id="cb14-102"><a href="#cb14-102" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-103"><a href="#cb14-103" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb14-104"><a href="#cb14-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-105"><a href="#cb14-105" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>**Add period features (year, Quarter, month, week and days)**</span>
-<span id="cb14-106"><a href="#cb14-106" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-109"><a href="#cb14-109" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb14-110"><a href="#cb14-110" aria-hidden="true" tabindex="-1"></a>df2 <span class="ot">&lt;-</span> df2 <span class="sc">|&gt;</span> </span>
-<span id="cb14-111"><a href="#cb14-111" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb14-112"><a href="#cb14-112" aria-hidden="true" tabindex="-1"></a>    <span class="at">Month =</span> <span class="fu">month</span>(order_date),</span>
-<span id="cb14-113"><a href="#cb14-113" aria-hidden="true" tabindex="-1"></a>    <span class="at">MonthName =</span> <span class="fu">month</span>(order_date, <span class="at">label =</span> <span class="cn">TRUE</span>, <span class="at">abbr =</span> <span class="cn">FALSE</span>),</span>
-<span id="cb14-114"><a href="#cb14-114" aria-hidden="true" tabindex="-1"></a>    <span class="at">MonthNumber =</span> <span class="fu">month</span>(order_date),</span>
-<span id="cb14-115"><a href="#cb14-115" aria-hidden="true" tabindex="-1"></a>    <span class="at">Day =</span> <span class="fu">day</span>(order_date),</span>
-<span id="cb14-116"><a href="#cb14-116" aria-hidden="true" tabindex="-1"></a>    <span class="at">Week =</span> <span class="fu">week</span>(order_date),</span>
-<span id="cb14-117"><a href="#cb14-117" aria-hidden="true" tabindex="-1"></a>    <span class="at">isoWeek =</span> <span class="fu">isoweek</span>(order_date),</span>
-<span id="cb14-118"><a href="#cb14-118" aria-hidden="true" tabindex="-1"></a>    <span class="at">DayOfMonth =</span> <span class="fu">mday</span>(order_date),</span>
-<span id="cb14-119"><a href="#cb14-119" aria-hidden="true" tabindex="-1"></a>    <span class="at">DayOfWeek =</span> <span class="fu">wday</span>(order_date),</span>
-<span id="cb14-120"><a href="#cb14-120" aria-hidden="true" tabindex="-1"></a>    <span class="at">DayName =</span> <span class="fu">wday</span>(order_date, <span class="at">label =</span> <span class="cn">TRUE</span>, <span class="at">abbr =</span> <span class="cn">FALSE</span>),</span>
-<span id="cb14-121"><a href="#cb14-121" aria-hidden="true" tabindex="-1"></a>    <span class="at">DayOfYr =</span> <span class="fu">yday</span>(order_date),</span>
-<span id="cb14-122"><a href="#cb14-122" aria-hidden="true" tabindex="-1"></a>    <span class="at">quarter =</span> <span class="fu">quarter</span>(order_date),</span>
-<span id="cb14-123"><a href="#cb14-123" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="fu">year</span>(order_date)</span>
-<span id="cb14-124"><a href="#cb14-124" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb14-125"><a href="#cb14-125" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-126"><a href="#cb14-126" aria-hidden="true" tabindex="-1"></a><span class="co"># Glimpse only the new columns</span></span>
-<span id="cb14-127"><a href="#cb14-127" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(<span class="fu">select</span>(df2, MonthName,MonthNumber, Day, Week, isoWeek, DayOfMonth, DayOfWeek, DayName, DayOfYr, quarter, year))</span>
-<span id="cb14-128"><a href="#cb14-128" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-129"><a href="#cb14-129" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb14-130"><a href="#cb14-130" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-131"><a href="#cb14-131" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Let us subset the data frame**</span>
-<span id="cb14-134"><a href="#cb14-134" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb14-135"><a href="#cb14-135" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
-<span id="cb14-136"><a href="#cb14-136" aria-hidden="true" tabindex="-1"></a>Data <span class="ot">&lt;-</span></span>
-<span id="cb14-137"><a href="#cb14-137" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(df2,</span>
-<span id="cb14-138"><a href="#cb14-138" aria-hidden="true" tabindex="-1"></a> order_id, order_date, status, item_id, sku, qty_ordered, price, value, discount_amount, total, category, payment_method, cust_id, Gender, age, full_name,<span class="st">`</span><span class="at">Place Name</span><span class="st">`</span>, County, City, State, Region, Discount_Percent, MonthName,MonthNumber, Day, Week, isoWeek, DayOfMonth, DayOfWeek, DayName, DayOfYr, quarter, year)</span>
-<span id="cb14-139"><a href="#cb14-139" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-140"><a href="#cb14-140" aria-hidden="true" tabindex="-1"></a><span class="fu">gt</span>(<span class="fu">head</span>(Data))</span>
-<span id="cb14-141"><a href="#cb14-141" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb14-142"><a href="#cb14-142" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-143"><a href="#cb14-143" aria-hidden="true" tabindex="-1"></a><span class="fu"># 2. Exploratory Data Analysis (EDA)</span></span>
-<span id="cb14-146"><a href="#cb14-146" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb14-147"><a href="#cb14-147" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(skimr)</span>
-<span id="cb14-148"><a href="#cb14-148" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-149"><a href="#cb14-149" aria-hidden="true" tabindex="-1"></a><span class="fu">skim</span>(Data)</span>
-<span id="cb14-150"><a href="#cb14-150" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb14-151"><a href="#cb14-151" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-152"><a href="#cb14-152" aria-hidden="true" tabindex="-1"></a><span class="fu"># 3. Data Visualization</span></span>
-<span id="cb14-153"><a href="#cb14-153" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-154"><a href="#cb14-154" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Objective:** Visualizing the distribution of a single variable, as well as relationships between two or more variables in the sales data frame.</span>
-<span id="cb14-155"><a href="#cb14-155" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-156"><a href="#cb14-156" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Tools:** Using ggplot2 which is a dplyr tool for visual aids.</span>
-<span id="cb14-157"><a href="#cb14-157" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-158"><a href="#cb14-158" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3.1 One Quantitative Variable</span></span>
-<span id="cb14-161"><a href="#cb14-161" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb14-162"><a href="#cb14-162" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb14-163"><a href="#cb14-163" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-164"><a href="#cb14-164" aria-hidden="true" tabindex="-1"></a>Numeric_Columns <span class="ot">&lt;-</span> Data <span class="sc">|&gt;</span></span>
-<span id="cb14-165"><a href="#cb14-165" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(qty_ordered, price,value, discount_amount, total)</span>
-<span id="cb14-166"><a href="#cb14-166" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-167"><a href="#cb14-167" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb14-168"><a href="#cb14-168" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-169"><a href="#cb14-169" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-170"><a href="#cb14-170" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, warning=FALSE}</span></span>
-<span id="cb14-171"><a href="#cb14-171" aria-hidden="true" tabindex="-1"></a><span class="in"># Load necessary libraries</span></span>
-<span id="cb14-172"><a href="#cb14-172" aria-hidden="true" tabindex="-1"></a><span class="in">library(ggplot2)</span></span>
-<span id="cb14-173"><a href="#cb14-173" aria-hidden="true" tabindex="-1"></a><span class="in">library(dplyr)</span></span>
-<span id="cb14-174"><a href="#cb14-174" aria-hidden="true" tabindex="-1"></a><span class="in">library(gridExtra)</span></span>
-<span id="cb14-175"><a href="#cb14-175" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-176"><a href="#cb14-176" aria-hidden="true" tabindex="-1"></a><span class="in"># Calculate the 2.5th and 97.5th percentiles</span></span>
-<span id="cb14-177"><a href="#cb14-177" aria-hidden="true" tabindex="-1"></a><span class="in">lower_bound &lt;- quantile(Numeric_Columns$total, 0.01)</span></span>
-<span id="cb14-178"><a href="#cb14-178" aria-hidden="true" tabindex="-1"></a><span class="in">upper_bound &lt;- quantile(Numeric_Columns$total, 0.975)</span></span>
-<span id="cb14-179"><a href="#cb14-179" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-180"><a href="#cb14-180" aria-hidden="true" tabindex="-1"></a><span class="in"># Create the histogram plot</span></span>
-<span id="cb14-181"><a href="#cb14-181" aria-hidden="true" tabindex="-1"></a><span class="in">histogram_plot1 &lt;- ggplot(Numeric_Columns, aes(x = total)) +</span></span>
-<span id="cb14-182"><a href="#cb14-182" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_histogram(bins = 30, fill = "lightblue", alpha = 0.5, color = "black", size = 0.1) +</span></span>
-<span id="cb14-183"><a href="#cb14-183" aria-hidden="true" tabindex="-1"></a><span class="in">  scale_x_continuous(limits = c(lower_bound, upper_bound)) +</span></span>
-<span id="cb14-184"><a href="#cb14-184" aria-hidden="true" tabindex="-1"></a><span class="in">  theme(legend.position = "none")</span></span>
-<span id="cb14-185"><a href="#cb14-185" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-186"><a href="#cb14-186" aria-hidden="true" tabindex="-1"></a><span class="in"># Create the histogram plot</span></span>
-<span id="cb14-187"><a href="#cb14-187" aria-hidden="true" tabindex="-1"></a><span class="in">histogram_plot2 &lt;- ggplot(Numeric_Columns, aes(x = price)) +</span></span>
-<span id="cb14-188"><a href="#cb14-188" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_histogram(bins = 30, fill = "lightblue", alpha = 0.5, color = "black", size = 0.1) +</span></span>
-<span id="cb14-189"><a href="#cb14-189" aria-hidden="true" tabindex="-1"></a><span class="in">  scale_x_continuous(limits = c(lower_bound, upper_bound)) +</span></span>
-<span id="cb14-190"><a href="#cb14-190" aria-hidden="true" tabindex="-1"></a><span class="in">  theme(legend.position = "none")</span></span>
-<span id="cb14-191"><a href="#cb14-191" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-192"><a href="#cb14-192" aria-hidden="true" tabindex="-1"></a><span class="in"># Create the histogram plot</span></span>
-<span id="cb14-193"><a href="#cb14-193" aria-hidden="true" tabindex="-1"></a><span class="in">histogram_plot3 &lt;- ggplot(Numeric_Columns, aes(x = value)) +</span></span>
-<span id="cb14-194"><a href="#cb14-194" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_histogram(bins = 30, fill = "lightblue", alpha = 0.5, color = "black", size = 0.1) +</span></span>
-<span id="cb14-195"><a href="#cb14-195" aria-hidden="true" tabindex="-1"></a><span class="in">  scale_x_continuous(limits = c(lower_bound, upper_bound)) +</span></span>
-<span id="cb14-196"><a href="#cb14-196" aria-hidden="true" tabindex="-1"></a><span class="in">  theme(legend.position = "none")</span></span>
-<span id="cb14-197"><a href="#cb14-197" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-198"><a href="#cb14-198" aria-hidden="true" tabindex="-1"></a><span class="in"># Create the histogram plot</span></span>
-<span id="cb14-199"><a href="#cb14-199" aria-hidden="true" tabindex="-1"></a><span class="in">histogram_plot4 &lt;- ggplot(Numeric_Columns, aes(x = discount_amount)) +</span></span>
-<span id="cb14-200"><a href="#cb14-200" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_histogram(bins = 30, fill = "lightblue", alpha = 0.5, color = "black", size = 0.1) +</span></span>
-<span id="cb14-201"><a href="#cb14-201" aria-hidden="true" tabindex="-1"></a><span class="in">  scale_x_continuous(limits = c(lower_bound, upper_bound)) +</span></span>
-<span id="cb14-202"><a href="#cb14-202" aria-hidden="true" tabindex="-1"></a><span class="in">  theme(legend.position = "none")</span></span>
-<span id="cb14-203"><a href="#cb14-203" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-204"><a href="#cb14-204" aria-hidden="true" tabindex="-1"></a><span class="in"># Arrange the plots in a grid layout</span></span>
-<span id="cb14-205"><a href="#cb14-205" aria-hidden="true" tabindex="-1"></a><span class="in">grid.arrange(histogram_plot1, histogram_plot2,histogram_plot3,histogram_plot4, ncol = 2)</span></span>
-<span id="cb14-206"><a href="#cb14-206" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-207"><a href="#cb14-207" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb14-208"><a href="#cb14-208" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-209"><a href="#cb14-209" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3.2 Visualizing Outliers (box plots)</span></span>
-<span id="cb14-210"><a href="#cb14-210" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-211"><a href="#cb14-211" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3.3 Visualizing Relationships (Two Numerical Variables)</span></span>
-<span id="cb14-212"><a href="#cb14-212" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-213"><a href="#cb14-213" aria-hidden="true" tabindex="-1"></a>In the following sections, we shall focus on **Total Sales**.</span>
-<span id="cb14-214"><a href="#cb14-214" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-215"><a href="#cb14-215" aria-hidden="true" tabindex="-1"></a><span class="fu">## 2.3 Visualizing Relationships (Numerical vs. Categorical)</span></span>
-<span id="cb14-216"><a href="#cb14-216" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-217"><a href="#cb14-217" aria-hidden="true" tabindex="-1"></a><span class="fu"># 3. Data Transformation</span></span>
-<span id="cb14-218"><a href="#cb14-218" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-219"><a href="#cb14-219" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Objective**</span>
-<span id="cb14-220"><a href="#cb14-220" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-221"><a href="#cb14-221" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Tools** Using dplyr tools to transform rows (filter() and arrange()), columns (select() and mutate()) and manipulate groups (group_by() and summarize())</span>
-<span id="cb14-222"><a href="#cb14-222" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-223"><a href="#cb14-223" aria-hidden="true" tabindex="-1"></a><span class="fu"># 4. Data Tidying</span></span>
-<span id="cb14-224"><a href="#cb14-224" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-225"><a href="#cb14-225" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Objective**</span>
-<span id="cb14-226"><a href="#cb14-226" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-227"><a href="#cb14-227" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Tools** Using dplyr tool tidyr by utilizing pivot_longer() and pivot_wider()</span>
-<span id="cb14-228"><a href="#cb14-228" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-229"><a href="#cb14-229" aria-hidden="true" tabindex="-1"></a><span class="fu"># 5. Exploratory Data Analysis (EDA)</span></span>
-<span id="cb14-230"><a href="#cb14-230" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-231"><a href="#cb14-231" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Objective**</span>
-<span id="cb14-232"><a href="#cb14-232" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-233"><a href="#cb14-233" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Tools** Using dplyr tools</span>
-<span id="cb14-234"><a href="#cb14-234" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-235"><a href="#cb14-235" aria-hidden="true" tabindex="-1"></a><span class="fu"># 6. Statistical analysis and inferantial statistics</span></span>
-<span id="cb14-236"><a href="#cb14-236" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-237"><a href="#cb14-237" aria-hidden="true" tabindex="-1"></a><span class="fu">## 6.1 Univariate Analysis (Understanding Individual Variables)</span></span>
-<span id="cb14-238"><a href="#cb14-238" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-239"><a href="#cb14-239" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Objective**</span>
-<span id="cb14-240"><a href="#cb14-240" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-241"><a href="#cb14-241" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Tools** Using dplyr tools to transform rows (filter() and arrange()), columns (select() and mutate()) and manipulate groups (group_by() and summarize())</span>
-<span id="cb14-242"><a href="#cb14-242" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-243"><a href="#cb14-243" aria-hidden="true" tabindex="-1"></a><span class="fu">### 6.1.1 Descriptive Statistics (numerical variables)</span></span>
-<span id="cb14-244"><a href="#cb14-244" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-245"><a href="#cb14-245" aria-hidden="true" tabindex="-1"></a><span class="fu">### 6.1.2 Frequency Tables (categorical variables)</span></span>
-<span id="cb14-246"><a href="#cb14-246" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-247"><a href="#cb14-247" aria-hidden="true" tabindex="-1"></a><span class="fu">## 6.2 Bivariate Analysis (Exploring Relationships Between Two Variables)</span></span>
-<span id="cb14-248"><a href="#cb14-248" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-249"><a href="#cb14-249" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Objective**</span>
-<span id="cb14-250"><a href="#cb14-250" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-251"><a href="#cb14-251" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Tools** Using dplyr tools to transform rows (filter() and arrange()), columns (select() and mutate()) and manipulate groups (group_by() and summarize())</span>
-<span id="cb14-252"><a href="#cb14-252" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-253"><a href="#cb14-253" aria-hidden="true" tabindex="-1"></a><span class="fu">### 6.2.1 Correlation Analysis (Numerical vs. Numerical)</span></span>
-<span id="cb14-254"><a href="#cb14-254" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-255"><a href="#cb14-255" aria-hidden="true" tabindex="-1"></a><span class="fu">### 6.2.2 Analysis of Variance (Numerical vs. Categorical)</span></span>
-<span id="cb14-256"><a href="#cb14-256" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-257"><a href="#cb14-257" aria-hidden="true" tabindex="-1"></a><span class="fu">### 6.2.3 Chi-Square Test (Categorical vs. Categorical)</span></span>
-<span id="cb14-258"><a href="#cb14-258" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-259"><a href="#cb14-259" aria-hidden="true" tabindex="-1"></a><span class="fu">## 6.3 Multivariate Analysis (Exploring Relationships Between Multiple Variables)</span></span>
-<span id="cb14-260"><a href="#cb14-260" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-261"><a href="#cb14-261" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Objective**</span>
-<span id="cb14-262"><a href="#cb14-262" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-263"><a href="#cb14-263" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Tools** Using dplyr tools to transform rows (filter() and arrange()), columns (select() and mutate()) and manipulate groups (group_by() and summarize())</span>
-<span id="cb14-264"><a href="#cb14-264" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-265"><a href="#cb14-265" aria-hidden="true" tabindex="-1"></a><span class="fu">### 6.3.1 Multiple Regression</span></span>
-<span id="cb14-266"><a href="#cb14-266" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-267"><a href="#cb14-267" aria-hidden="true" tabindex="-1"></a><span class="fu">### 6.3.2 Logistic Regression</span></span>
-<span id="cb14-268"><a href="#cb14-268" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-269"><a href="#cb14-269" aria-hidden="true" tabindex="-1"></a><span class="fu">### 6.3.3 Factor Analysis</span></span>
-<span id="cb14-270"><a href="#cb14-270" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-271"><a href="#cb14-271" aria-hidden="true" tabindex="-1"></a><span class="fu">### 6.3.4 Cluster Analysis</span></span>
-<span id="cb14-272"><a href="#cb14-272" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-273"><a href="#cb14-273" aria-hidden="true" tabindex="-1"></a><span class="fu">## 7. Survival Analysis (Next Project)</span></span>
-<span id="cb14-274"><a href="#cb14-274" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-275"><a href="#cb14-275" aria-hidden="true" tabindex="-1"></a>Model the time it takes for an event to occur ( time to customer churn).</span>
-<span id="cb14-276"><a href="#cb14-276" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-277"><a href="#cb14-277" aria-hidden="true" tabindex="-1"></a><span class="fu"># 2. Univariate Analysis (Understanding Individual Variables)</span></span>
-<span id="cb14-278"><a href="#cb14-278" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-279"><a href="#cb14-279" aria-hidden="true" tabindex="-1"></a><span class="fu">## - Numerical Variables:</span></span>
-<span id="cb14-280"><a href="#cb14-280" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-281"><a href="#cb14-281" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Descriptive Statistics:** Calculate measures of central tendency and dispersion to understand the data distribution.</span>
-<span id="cb14-282"><a href="#cb14-282" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-283"><a href="#cb14-283" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Visualization:** Create histograms, box plots and density plots to visualize data distribution and identify potential outliers or skewness.</span>
-<span id="cb14-284"><a href="#cb14-284" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-285"><a href="#cb14-285" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Bar Charts &amp; Pie Charts:** Visualize the proportion of data points within each category.</span>
-<span id="cb14-286"><a href="#cb14-286" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-287"><a href="#cb14-287" aria-hidden="true" tabindex="-1"></a><span class="fu"># 3. Bivariate Analysis (Exploring Relationships Between Two Variables)</span></span>
-<span id="cb14-288"><a href="#cb14-288" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-289"><a href="#cb14-289" aria-hidden="true" tabindex="-1"></a><span class="fu">## - Numerical vs. Numerical:</span></span>
-<span id="cb14-290"><a href="#cb14-290" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-291"><a href="#cb14-291" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Scatter Plots:** Visualize the relationship between two numerical variables (e.g., discount vs. sales).</span>
-<span id="cb14-292"><a href="#cb14-292" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Correlation Analysis:** Calculate Pearson's correlation coefficient to measure the strength and direction of the linear relationship.</span>
-<span id="cb14-293"><a href="#cb14-293" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-294"><a href="#cb14-294" aria-hidden="true" tabindex="-1"></a><span class="fu">## - Numerical vs. Categorical:</span></span>
-<span id="cb14-295"><a href="#cb14-295" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-296"><a href="#cb14-296" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Box Plots:** Compare the distribution of a numerical variable across different categories of a categorical variable (e.g., average profit for different product categories).</span>
-<span id="cb14-297"><a href="#cb14-297" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**ANOVA (Analysis of Variance):** Test if the means of a numerical variable differ significantly across categories of a categorical variable.</span>
-<span id="cb14-298"><a href="#cb14-298" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-299"><a href="#cb14-299" aria-hidden="true" tabindex="-1"></a><span class="fu">## - Categorical vs. Categorical:</span></span>
-<span id="cb14-300"><a href="#cb14-300" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-301"><a href="#cb14-301" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Chi-Square Test:** Assess the association between two categorical variables (e.g., is there a relationship between discount offered and customer location?).</span>
-<span id="cb14-302"><a href="#cb14-302" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-303"><a href="#cb14-303" aria-hidden="true" tabindex="-1"></a><span class="fu"># 4. Multivariate Analysis (Exploring Relationships Between Multiple Variables)</span></span>
-<span id="cb14-304"><a href="#cb14-304" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-305"><a href="#cb14-305" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Multiple Regression:** Analyze how multiple independent variables (e.g., discount, product type) influence a dependent variable (e.g., sales).</span>
-<span id="cb14-306"><a href="#cb14-306" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Logistic Regression:** Model the probability of a categorical outcome (e.g., purchase or no purchase) based on multiple independent variables.</span>
-<span id="cb14-307"><a href="#cb14-307" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Factor Analysis:** Identify underlying factors that explain the variance in a set of interrelated variables.</span>
-<span id="cb14-308"><a href="#cb14-308" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Cluster Analysis:** Group similar data points (e.g., customers with similar buying behavior) based on multiple variables.</span>
-<span id="cb14-309"><a href="#cb14-309" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Time Series Analysis:** Analyze sales or profit data over time to identify trends and seasonality.</span>
-<span id="cb14-310"><a href="#cb14-310" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-311"><a href="#cb14-311" aria-hidden="true" tabindex="-1"></a><span class="fu"># 2. Univariate Analysis (Understanding Individual Variables) </span></span>
-<span id="cb14-312"><a href="#cb14-312" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-313"><a href="#cb14-313" aria-hidden="true" tabindex="-1"></a><span class="fu">## - Numerical Variables:</span></span>
-<span id="cb14-314"><a href="#cb14-314" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>**Descriptive Statistics:**</span>
-<span id="cb14-315"><a href="#cb14-315" aria-hidden="true" tabindex="-1"></a>Calculate measures of central tendency and dispersion to understand the data distribution.</span>
-<span id="cb14-316"><a href="#cb14-316" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-317"><a href="#cb14-317" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>**Visualization:**</span>
-<span id="cb14-318"><a href="#cb14-318" aria-hidden="true" tabindex="-1"></a>Create histograms, box plots and density plots to visualize data </span>
-<span id="cb14-319"><a href="#cb14-319" aria-hidden="true" tabindex="-1"></a>distribution and identify potential outliers or skewness. </span>
-<span id="cb14-320"><a href="#cb14-320" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-321"><a href="#cb14-321" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>**Bar Charts &amp; Pie Charts:**</span>
-<span id="cb14-322"><a href="#cb14-322" aria-hidden="true" tabindex="-1"></a>  Visualize the proportion of data points within each category. </span>
-<span id="cb14-323"><a href="#cb14-323" aria-hidden="true" tabindex="-1"></a> </span>
-<span id="cb14-324"><a href="#cb14-324" aria-hidden="true" tabindex="-1"></a><span class="fu"># 3. Bivariate Analysis (Exploring Relationships Between Two Variables) </span></span>
-<span id="cb14-325"><a href="#cb14-325" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-326"><a href="#cb14-326" aria-hidden="true" tabindex="-1"></a><span class="fu">## - Numerical vs. Numerical: </span></span>
-<span id="cb14-327"><a href="#cb14-327" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>**Scatter Plots:**</span>
-<span id="cb14-328"><a href="#cb14-328" aria-hidden="true" tabindex="-1"></a>Visualize the relationship between two numerical variables (e.g., </span>
-<span id="cb14-329"><a href="#cb14-329" aria-hidden="true" tabindex="-1"></a>discount vs. sales). </span>
-<span id="cb14-330"><a href="#cb14-330" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>**Correlation Analysis:**</span>
-<span id="cb14-331"><a href="#cb14-331" aria-hidden="true" tabindex="-1"></a>Calculate Pearson's correlation coefficient to measure the </span>
-<span id="cb14-332"><a href="#cb14-332" aria-hidden="true" tabindex="-1"></a>strength and direction of the linear relationship. </span>
-<span id="cb14-333"><a href="#cb14-333" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-334"><a href="#cb14-334" aria-hidden="true" tabindex="-1"></a><span class="fu">## - Numerical vs. Categorical: </span></span>
-<span id="cb14-335"><a href="#cb14-335" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>**Box Plots:**</span>
-<span id="cb14-336"><a href="#cb14-336" aria-hidden="true" tabindex="-1"></a>Compare the distribution of a numerical variable across different categories of a categorical variable (e.g., average profit for different product </span>
-<span id="cb14-337"><a href="#cb14-337" aria-hidden="true" tabindex="-1"></a>categories). </span>
-<span id="cb14-338"><a href="#cb14-338" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>**ANOVA (Analysis of Variance):**</span>
-<span id="cb14-339"><a href="#cb14-339" aria-hidden="true" tabindex="-1"></a>Test if the means of a numerical variable differ </span>
-<span id="cb14-340"><a href="#cb14-340" aria-hidden="true" tabindex="-1"></a>significantly across categories of a categorical variable. </span>
-<span id="cb14-341"><a href="#cb14-341" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-342"><a href="#cb14-342" aria-hidden="true" tabindex="-1"></a><span class="fu">## - Categorical vs. Categorical: </span></span>
-<span id="cb14-343"><a href="#cb14-343" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>**Chi-Square Test:**</span>
-<span id="cb14-344"><a href="#cb14-344" aria-hidden="true" tabindex="-1"></a>Assess the association between two categorical variables (e.g., </span>
-<span id="cb14-345"><a href="#cb14-345" aria-hidden="true" tabindex="-1"></a>is there a relationship between discount offered and customer location?). </span>
-<span id="cb14-346"><a href="#cb14-346" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-347"><a href="#cb14-347" aria-hidden="true" tabindex="-1"></a><span class="fu"># 4. Multivariate Analysis (Exploring Relationships Between Multiple Variables) </span></span>
-<span id="cb14-348"><a href="#cb14-348" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>**Multiple Regression:**</span>
-<span id="cb14-349"><a href="#cb14-349" aria-hidden="true" tabindex="-1"></a>Analyze how multiple independent variables (e.g., discount, </span>
-<span id="cb14-350"><a href="#cb14-350" aria-hidden="true" tabindex="-1"></a>product type) influence a dependent variable (e.g., sales). </span>
-<span id="cb14-351"><a href="#cb14-351" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>**Logistic Regression:**</span>
-<span id="cb14-352"><a href="#cb14-352" aria-hidden="true" tabindex="-1"></a>Model the probability of a categorical outcome (e.g., purchase or </span>
-<span id="cb14-353"><a href="#cb14-353" aria-hidden="true" tabindex="-1"></a>no purchase) based on multiple independent variables.</span>
-<span id="cb14-354"><a href="#cb14-354" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>**Factor Analysis:**</span>
-<span id="cb14-355"><a href="#cb14-355" aria-hidden="true" tabindex="-1"></a>Identify underlying factors that explain the variance in a set of interrelated variables. </span>
-<span id="cb14-356"><a href="#cb14-356" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>**Cluster Analysis:**</span>
-<span id="cb14-357"><a href="#cb14-357" aria-hidden="true" tabindex="-1"></a>Group similar data points (e.g., customers with similar buying behavior) based on multiple variables.</span>
-<span id="cb14-358"><a href="#cb14-358" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>**Time Series Analysis:**</span>
-<span id="cb14-359"><a href="#cb14-359" aria-hidden="true" tabindex="-1"></a>Analyze sales or profit data over time to identify trends and seasonality. </span>
+<div class="sourceCode" id="cb12" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "DATA ANALYSIS WITH R"</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "(A Step-by-step Statistical Approach)" </span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span><span class="co"> html</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="an">code-fold:</span><span class="co"> true</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="an">code-tools:</span><span class="co"> true</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span><span class="co"> </span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co">  cache: true</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false </span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="fu"># Introduction</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>This project outlines the steps for analyzing data on sales, profit and tax It includes recommended statistical analyses for both numerical and categorical variables.</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>By employing suitable statistical analyses, we gave valuable insights into the relationships between sales, profit and tax This information can be used to optimize ***pricing strategies***, ***improve sales performance*** and ***make informed business decisions***.</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="fu"># Considerations</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Choose the statistical analysis appropriate for the data type (numerical vs. categorical).</span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Consider normality assumptions for specific tests and address them through transformation if necessary.</span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Utilize visualization techniques throughout the analysis to effectively communicate insights.</span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a><span class="fu"># 1. Data Preparation </span></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Loading and Checking Data types**</span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, warning=FALSE}</span></span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a><span class="in">library(dplyr)</span></span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a><span class="in">library(gt)</span></span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a><span class="in">library(readr)</span></span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a><span class="in"># Load the file using readr</span></span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a><span class="in">df &lt;- read_csv("C:/Data/Projects/R-DataScience/Sales Analysis/Amazon Sales FY2020-21.csv")</span></span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a><span class="in"># View the data types </span></span>
+<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a><span class="in">glimpse(df)</span></span>
+<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>**Typical problems revealed by data types** </span>
+<span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-45"><a href="#cb12-45" aria-hidden="true" tabindex="-1"></a>In the date column, it is reviewed that the dates are in string format '&lt;chr&gt;'. Let us utilize <span class="in">`lubridate`</span> R-package to address this issue. Another issue noticed in the data is the user name, we need to combine first name and last name columns. </span>
+<span id="cb12-46"><a href="#cb12-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-47"><a href="#cb12-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-48"><a href="#cb12-48" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>Convert to date </span>
+<span id="cb12-49"><a href="#cb12-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-52"><a href="#cb12-52" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb12-53"><a href="#cb12-53" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb12-54"><a href="#cb12-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-55"><a href="#cb12-55" aria-hidden="true" tabindex="-1"></a>df2 <span class="ot">&lt;-</span> df</span>
+<span id="cb12-56"><a href="#cb12-56" aria-hidden="true" tabindex="-1"></a> df2<span class="sc">$</span>order_date <span class="ot">=</span> <span class="fu">dmy</span>(df2<span class="sc">$</span>order_date)</span>
+<span id="cb12-57"><a href="#cb12-57" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb12-58"><a href="#cb12-58" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(df2<span class="sc">$</span>order_date)</span>
+<span id="cb12-59"><a href="#cb12-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-60"><a href="#cb12-60" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb12-61"><a href="#cb12-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-62"><a href="#cb12-62" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>Merge name columns</span>
+<span id="cb12-63"><a href="#cb12-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-66"><a href="#cb12-66" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb12-67"><a href="#cb12-67" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb12-68"><a href="#cb12-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-69"><a href="#cb12-69" aria-hidden="true" tabindex="-1"></a>df2<span class="sc">$</span>Name <span class="ot">&lt;-</span> <span class="fu">paste</span>(df2<span class="sc">$</span><span class="st">`</span><span class="at">First Name</span><span class="st">`</span>, df2<span class="sc">$</span><span class="st">`</span><span class="at">Last Name</span><span class="st">`</span>, <span class="at">sep =</span> <span class="st">" "</span>)</span>
+<span id="cb12-70"><a href="#cb12-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-71"><a href="#cb12-71" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb12-72"><a href="#cb12-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-73"><a href="#cb12-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-74"><a href="#cb12-74" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Create a subset of our data frame**</span>
+<span id="cb12-75"><a href="#cb12-75" aria-hidden="true" tabindex="-1"></a>We need to select, explore and analyse only the columns needed to achieve our objective.</span>
+<span id="cb12-76"><a href="#cb12-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-79"><a href="#cb12-79" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb12-80"><a href="#cb12-80" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
+<span id="cb12-81"><a href="#cb12-81" aria-hidden="true" tabindex="-1"></a>Data <span class="ot">&lt;-</span></span>
+<span id="cb12-82"><a href="#cb12-82" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(df2,</span>
+<span id="cb12-83"><a href="#cb12-83" aria-hidden="true" tabindex="-1"></a> order_date, status, item_id, sku, qty_ordered, price, value, discount_amount, total, category, payment_method, Gender, age, full_name,<span class="st">`</span><span class="at">Place Name</span><span class="st">`</span>, County, City, State, Region, Discount_Percent)</span>
+<span id="cb12-84"><a href="#cb12-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-85"><a href="#cb12-85" aria-hidden="true" tabindex="-1"></a><span class="fu">gt</span>(<span class="fu">head</span>(Data))</span>
+<span id="cb12-86"><a href="#cb12-86" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb12-87"><a href="#cb12-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-88"><a href="#cb12-88" aria-hidden="true" tabindex="-1"></a><span class="fu"># 2. Exploratory Data Analysis (EDA)</span></span>
+<span id="cb12-89"><a href="#cb12-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-92"><a href="#cb12-92" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb12-93"><a href="#cb12-93" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(skimr)</span>
+<span id="cb12-94"><a href="#cb12-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-95"><a href="#cb12-95" aria-hidden="true" tabindex="-1"></a><span class="fu">skim</span>(Data)</span>
+<span id="cb12-96"><a href="#cb12-96" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb12-97"><a href="#cb12-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-98"><a href="#cb12-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-99"><a href="#cb12-99" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>**Typical problems revealed by data summaries**</span>
+<span id="cb12-100"><a href="#cb12-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-101"><a href="#cb12-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-102"><a href="#cb12-102" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>**Add period features (year, Quarter, month, week and days)**</span>
+<span id="cb12-103"><a href="#cb12-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-106"><a href="#cb12-106" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb12-107"><a href="#cb12-107" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb12-108"><a href="#cb12-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-109"><a href="#cb12-109" aria-hidden="true" tabindex="-1"></a>Data <span class="ot">&lt;-</span> Data <span class="sc">|&gt;</span> </span>
+<span id="cb12-110"><a href="#cb12-110" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb12-111"><a href="#cb12-111" aria-hidden="true" tabindex="-1"></a>    <span class="at">Month =</span> <span class="fu">month</span>(order_date),</span>
+<span id="cb12-112"><a href="#cb12-112" aria-hidden="true" tabindex="-1"></a>    <span class="at">MonthName =</span> <span class="fu">month</span>(order_date, <span class="at">label =</span> <span class="cn">TRUE</span>, <span class="at">abbr =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb12-113"><a href="#cb12-113" aria-hidden="true" tabindex="-1"></a>    <span class="at">MonthNumber =</span> <span class="fu">month</span>(order_date),</span>
+<span id="cb12-114"><a href="#cb12-114" aria-hidden="true" tabindex="-1"></a>    <span class="at">Day =</span> <span class="fu">day</span>(order_date),</span>
+<span id="cb12-115"><a href="#cb12-115" aria-hidden="true" tabindex="-1"></a>    <span class="at">Week =</span> <span class="fu">week</span>(order_date),</span>
+<span id="cb12-116"><a href="#cb12-116" aria-hidden="true" tabindex="-1"></a>    <span class="at">isoWeek =</span> <span class="fu">isoweek</span>(order_date),</span>
+<span id="cb12-117"><a href="#cb12-117" aria-hidden="true" tabindex="-1"></a>    <span class="at">DayOfMonth =</span> <span class="fu">mday</span>(order_date),</span>
+<span id="cb12-118"><a href="#cb12-118" aria-hidden="true" tabindex="-1"></a>    <span class="at">DayOfWeek =</span> <span class="fu">wday</span>(order_date),</span>
+<span id="cb12-119"><a href="#cb12-119" aria-hidden="true" tabindex="-1"></a>    <span class="at">DayName =</span> <span class="fu">wday</span>(order_date, <span class="at">label =</span> <span class="cn">TRUE</span>, <span class="at">abbr =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb12-120"><a href="#cb12-120" aria-hidden="true" tabindex="-1"></a>    <span class="at">DayOfYr =</span> <span class="fu">yday</span>(order_date),</span>
+<span id="cb12-121"><a href="#cb12-121" aria-hidden="true" tabindex="-1"></a>    <span class="at">quarter =</span> <span class="fu">quarter</span>(order_date),</span>
+<span id="cb12-122"><a href="#cb12-122" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="fu">year</span>(order_date)</span>
+<span id="cb12-123"><a href="#cb12-123" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb12-124"><a href="#cb12-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-125"><a href="#cb12-125" aria-hidden="true" tabindex="-1"></a><span class="co"># Glimpse of columns</span></span>
+<span id="cb12-126"><a href="#cb12-126" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(Data)</span>
+<span id="cb12-127"><a href="#cb12-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-128"><a href="#cb12-128" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb12-129"><a href="#cb12-129" aria-hidden="true" tabindex="-1"></a><span class="fu"># 3. Data Visualization</span></span>
+<span id="cb12-130"><a href="#cb12-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-131"><a href="#cb12-131" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Objective:** Visualizing the distribution of a single variable, as well as relationships between two or more variables in the sales data frame.</span>
+<span id="cb12-132"><a href="#cb12-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-133"><a href="#cb12-133" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Tools:** Using ggplot2 which is a dplyr tool for visual aids.</span>
+<span id="cb12-134"><a href="#cb12-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-135"><a href="#cb12-135" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3.1 One Quantitative Variable</span></span>
+<span id="cb12-138"><a href="#cb12-138" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb12-139"><a href="#cb12-139" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb12-140"><a href="#cb12-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-141"><a href="#cb12-141" aria-hidden="true" tabindex="-1"></a>Numeric_Columns <span class="ot">&lt;-</span> Data <span class="sc">|&gt;</span></span>
+<span id="cb12-142"><a href="#cb12-142" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(qty_ordered, price,value, discount_amount, total)</span>
+<span id="cb12-143"><a href="#cb12-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-144"><a href="#cb12-144" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb12-145"><a href="#cb12-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-146"><a href="#cb12-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-147"><a href="#cb12-147" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, warning=FALSE}</span></span>
+<span id="cb12-148"><a href="#cb12-148" aria-hidden="true" tabindex="-1"></a><span class="in"># Load necessary libraries</span></span>
+<span id="cb12-149"><a href="#cb12-149" aria-hidden="true" tabindex="-1"></a><span class="in">library(ggplot2)</span></span>
+<span id="cb12-150"><a href="#cb12-150" aria-hidden="true" tabindex="-1"></a><span class="in">library(dplyr)</span></span>
+<span id="cb12-151"><a href="#cb12-151" aria-hidden="true" tabindex="-1"></a><span class="in">library(gridExtra)</span></span>
+<span id="cb12-152"><a href="#cb12-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-153"><a href="#cb12-153" aria-hidden="true" tabindex="-1"></a><span class="in"># Calculate the 2.5th and 97.5th percentiles</span></span>
+<span id="cb12-154"><a href="#cb12-154" aria-hidden="true" tabindex="-1"></a><span class="in">lower_bound &lt;- quantile(Numeric_Columns$total, 0.01)</span></span>
+<span id="cb12-155"><a href="#cb12-155" aria-hidden="true" tabindex="-1"></a><span class="in">upper_bound &lt;- quantile(Numeric_Columns$total, 0.975)</span></span>
+<span id="cb12-156"><a href="#cb12-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-157"><a href="#cb12-157" aria-hidden="true" tabindex="-1"></a><span class="in"># Create the histogram plot</span></span>
+<span id="cb12-158"><a href="#cb12-158" aria-hidden="true" tabindex="-1"></a><span class="in">histogram_plot1 &lt;- ggplot(Numeric_Columns, aes(x = total)) +</span></span>
+<span id="cb12-159"><a href="#cb12-159" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_histogram(bins = 30, fill = "lightblue", alpha = 0.5, color = "black", size = 0.1) +</span></span>
+<span id="cb12-160"><a href="#cb12-160" aria-hidden="true" tabindex="-1"></a><span class="in">  scale_x_continuous(limits = c(lower_bound, upper_bound)) +</span></span>
+<span id="cb12-161"><a href="#cb12-161" aria-hidden="true" tabindex="-1"></a><span class="in">  theme(legend.position = "none")</span></span>
+<span id="cb12-162"><a href="#cb12-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-163"><a href="#cb12-163" aria-hidden="true" tabindex="-1"></a><span class="in"># Create the histogram plot</span></span>
+<span id="cb12-164"><a href="#cb12-164" aria-hidden="true" tabindex="-1"></a><span class="in">histogram_plot2 &lt;- ggplot(Numeric_Columns, aes(x = price)) +</span></span>
+<span id="cb12-165"><a href="#cb12-165" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_histogram(bins = 30, fill = "lightblue", alpha = 0.5, color = "black", size = 0.1) +</span></span>
+<span id="cb12-166"><a href="#cb12-166" aria-hidden="true" tabindex="-1"></a><span class="in">  scale_x_continuous(limits = c(lower_bound, upper_bound)) +</span></span>
+<span id="cb12-167"><a href="#cb12-167" aria-hidden="true" tabindex="-1"></a><span class="in">  theme(legend.position = "none")</span></span>
+<span id="cb12-168"><a href="#cb12-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-169"><a href="#cb12-169" aria-hidden="true" tabindex="-1"></a><span class="in"># Create the histogram plot</span></span>
+<span id="cb12-170"><a href="#cb12-170" aria-hidden="true" tabindex="-1"></a><span class="in">histogram_plot3 &lt;- ggplot(Numeric_Columns, aes(x = value)) +</span></span>
+<span id="cb12-171"><a href="#cb12-171" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_histogram(bins = 30, fill = "lightblue", alpha = 0.5, color = "black", size = 0.1) +</span></span>
+<span id="cb12-172"><a href="#cb12-172" aria-hidden="true" tabindex="-1"></a><span class="in">  scale_x_continuous(limits = c(lower_bound, upper_bound)) +</span></span>
+<span id="cb12-173"><a href="#cb12-173" aria-hidden="true" tabindex="-1"></a><span class="in">  theme(legend.position = "none")</span></span>
+<span id="cb12-174"><a href="#cb12-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-175"><a href="#cb12-175" aria-hidden="true" tabindex="-1"></a><span class="in"># Create the histogram plot</span></span>
+<span id="cb12-176"><a href="#cb12-176" aria-hidden="true" tabindex="-1"></a><span class="in">histogram_plot4 &lt;- ggplot(Numeric_Columns, aes(x = discount_amount)) +</span></span>
+<span id="cb12-177"><a href="#cb12-177" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_histogram(bins = 30, fill = "lightblue", alpha = 0.5, color = "black", size = 0.1) +</span></span>
+<span id="cb12-178"><a href="#cb12-178" aria-hidden="true" tabindex="-1"></a><span class="in">  scale_x_continuous(limits = c(lower_bound, upper_bound)) +</span></span>
+<span id="cb12-179"><a href="#cb12-179" aria-hidden="true" tabindex="-1"></a><span class="in">  theme(legend.position = "none")</span></span>
+<span id="cb12-180"><a href="#cb12-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-181"><a href="#cb12-181" aria-hidden="true" tabindex="-1"></a><span class="in"># Arrange the plots in a grid layout</span></span>
+<span id="cb12-182"><a href="#cb12-182" aria-hidden="true" tabindex="-1"></a><span class="in">grid.arrange(histogram_plot1, histogram_plot2,histogram_plot3,histogram_plot4, ncol = 2)</span></span>
+<span id="cb12-183"><a href="#cb12-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-184"><a href="#cb12-184" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb12-185"><a href="#cb12-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-186"><a href="#cb12-186" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3.2 Visualizing Outliers (box plots)</span></span>
+<span id="cb12-187"><a href="#cb12-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-188"><a href="#cb12-188" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3.3 Visualizing Relationships (Two Numerical Variables)</span></span>
+<span id="cb12-189"><a href="#cb12-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-190"><a href="#cb12-190" aria-hidden="true" tabindex="-1"></a>In the following sections, we shall focus on **Total Sales**.</span>
+<span id="cb12-191"><a href="#cb12-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-192"><a href="#cb12-192" aria-hidden="true" tabindex="-1"></a><span class="fu">## 2.3 Visualizing Relationships (Numerical vs. Categorical)</span></span>
+<span id="cb12-193"><a href="#cb12-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-194"><a href="#cb12-194" aria-hidden="true" tabindex="-1"></a><span class="fu"># 3. Data Transformation</span></span>
+<span id="cb12-195"><a href="#cb12-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-196"><a href="#cb12-196" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Objective**</span>
+<span id="cb12-197"><a href="#cb12-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-198"><a href="#cb12-198" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Tools** Using dplyr tools to transform rows (filter() and arrange()), columns (select() and mutate()) and manipulate groups (group_by() and summarize())</span>
+<span id="cb12-199"><a href="#cb12-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-200"><a href="#cb12-200" aria-hidden="true" tabindex="-1"></a><span class="fu"># 4. Data Tidying</span></span>
+<span id="cb12-201"><a href="#cb12-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-202"><a href="#cb12-202" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Objective**</span>
+<span id="cb12-203"><a href="#cb12-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-204"><a href="#cb12-204" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Tools** Using dplyr tool tidyr by utilizing pivot_longer() and pivot_wider()</span>
+<span id="cb12-205"><a href="#cb12-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-206"><a href="#cb12-206" aria-hidden="true" tabindex="-1"></a><span class="fu"># 5. Exploratory Data Analysis (EDA)</span></span>
+<span id="cb12-207"><a href="#cb12-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-208"><a href="#cb12-208" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Objective**</span>
+<span id="cb12-209"><a href="#cb12-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-210"><a href="#cb12-210" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Tools** Using dplyr tools</span>
+<span id="cb12-211"><a href="#cb12-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-212"><a href="#cb12-212" aria-hidden="true" tabindex="-1"></a><span class="fu"># 6. Statistical analysis and inferantial statistics</span></span>
+<span id="cb12-213"><a href="#cb12-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-214"><a href="#cb12-214" aria-hidden="true" tabindex="-1"></a><span class="fu">## 6.1 Univariate Analysis (Understanding Individual Variables)</span></span>
+<span id="cb12-215"><a href="#cb12-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-216"><a href="#cb12-216" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Objective**</span>
+<span id="cb12-217"><a href="#cb12-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-218"><a href="#cb12-218" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Tools** Using dplyr tools to transform rows (filter() and arrange()), columns (select() and mutate()) and manipulate groups (group_by() and summarize())</span>
+<span id="cb12-219"><a href="#cb12-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-220"><a href="#cb12-220" aria-hidden="true" tabindex="-1"></a><span class="fu">### 6.1.1 Descriptive Statistics (numerical variables)</span></span>
+<span id="cb12-221"><a href="#cb12-221" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-222"><a href="#cb12-222" aria-hidden="true" tabindex="-1"></a><span class="fu">### 6.1.2 Frequency Tables (categorical variables)</span></span>
+<span id="cb12-223"><a href="#cb12-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-224"><a href="#cb12-224" aria-hidden="true" tabindex="-1"></a><span class="fu">## 6.2 Bivariate Analysis (Exploring Relationships Between Two Variables)</span></span>
+<span id="cb12-225"><a href="#cb12-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-226"><a href="#cb12-226" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Objective**</span>
+<span id="cb12-227"><a href="#cb12-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-228"><a href="#cb12-228" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Tools** Using dplyr tools to transform rows (filter() and arrange()), columns (select() and mutate()) and manipulate groups (group_by() and summarize())</span>
+<span id="cb12-229"><a href="#cb12-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-230"><a href="#cb12-230" aria-hidden="true" tabindex="-1"></a><span class="fu">### 6.2.1 Correlation Analysis (Numerical vs. Numerical)</span></span>
+<span id="cb12-231"><a href="#cb12-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-232"><a href="#cb12-232" aria-hidden="true" tabindex="-1"></a><span class="fu">### 6.2.2 Analysis of Variance (Numerical vs. Categorical)</span></span>
+<span id="cb12-233"><a href="#cb12-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-234"><a href="#cb12-234" aria-hidden="true" tabindex="-1"></a><span class="fu">### 6.2.3 Chi-Square Test (Categorical vs. Categorical)</span></span>
+<span id="cb12-235"><a href="#cb12-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-236"><a href="#cb12-236" aria-hidden="true" tabindex="-1"></a><span class="fu">## 6.3 Multivariate Analysis (Exploring Relationships Between Multiple Variables)</span></span>
+<span id="cb12-237"><a href="#cb12-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-238"><a href="#cb12-238" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Objective**</span>
+<span id="cb12-239"><a href="#cb12-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-240"><a href="#cb12-240" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Tools** Using dplyr tools to transform rows (filter() and arrange()), columns (select() and mutate()) and manipulate groups (group_by() and summarize())</span>
+<span id="cb12-241"><a href="#cb12-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-242"><a href="#cb12-242" aria-hidden="true" tabindex="-1"></a><span class="fu">### 6.3.1 Multiple Regression</span></span>
+<span id="cb12-243"><a href="#cb12-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-244"><a href="#cb12-244" aria-hidden="true" tabindex="-1"></a><span class="fu">### 6.3.2 Logistic Regression</span></span>
+<span id="cb12-245"><a href="#cb12-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-246"><a href="#cb12-246" aria-hidden="true" tabindex="-1"></a><span class="fu">### 6.3.3 Factor Analysis</span></span>
+<span id="cb12-247"><a href="#cb12-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-248"><a href="#cb12-248" aria-hidden="true" tabindex="-1"></a><span class="fu">### 6.3.4 Cluster Analysis</span></span>
+<span id="cb12-249"><a href="#cb12-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-250"><a href="#cb12-250" aria-hidden="true" tabindex="-1"></a><span class="fu">## 7. Survival Analysis (Next Project)</span></span>
+<span id="cb12-251"><a href="#cb12-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-252"><a href="#cb12-252" aria-hidden="true" tabindex="-1"></a>Model the time it takes for an event to occur ( time to customer churn).</span>
+<span id="cb12-253"><a href="#cb12-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-254"><a href="#cb12-254" aria-hidden="true" tabindex="-1"></a><span class="fu"># 2. Univariate Analysis (Understanding Individual Variables)</span></span>
+<span id="cb12-255"><a href="#cb12-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-256"><a href="#cb12-256" aria-hidden="true" tabindex="-1"></a><span class="fu">## - Numerical Variables:</span></span>
+<span id="cb12-257"><a href="#cb12-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-258"><a href="#cb12-258" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Descriptive Statistics:** Calculate measures of central tendency and dispersion to understand the data distribution.</span>
+<span id="cb12-259"><a href="#cb12-259" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-260"><a href="#cb12-260" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Visualization:** Create histograms, box plots and density plots to visualize data distribution and identify potential outliers or skewness.</span>
+<span id="cb12-261"><a href="#cb12-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-262"><a href="#cb12-262" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Bar Charts &amp; Pie Charts:** Visualize the proportion of data points within each category.</span>
+<span id="cb12-263"><a href="#cb12-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-264"><a href="#cb12-264" aria-hidden="true" tabindex="-1"></a><span class="fu"># 3. Bivariate Analysis (Exploring Relationships Between Two Variables)</span></span>
+<span id="cb12-265"><a href="#cb12-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-266"><a href="#cb12-266" aria-hidden="true" tabindex="-1"></a><span class="fu">## - Numerical vs. Numerical:</span></span>
+<span id="cb12-267"><a href="#cb12-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-268"><a href="#cb12-268" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Scatter Plots:** Visualize the relationship between two numerical variables (e.g., discount vs. sales).</span>
+<span id="cb12-269"><a href="#cb12-269" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Correlation Analysis:** Calculate Pearson's correlation coefficient to measure the strength and direction of the linear relationship.</span>
+<span id="cb12-270"><a href="#cb12-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-271"><a href="#cb12-271" aria-hidden="true" tabindex="-1"></a><span class="fu">## - Numerical vs. Categorical:</span></span>
+<span id="cb12-272"><a href="#cb12-272" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-273"><a href="#cb12-273" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Box Plots:** Compare the distribution of a numerical variable across different categories of a categorical variable (e.g., average profit for different product categories).</span>
+<span id="cb12-274"><a href="#cb12-274" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**ANOVA (Analysis of Variance):** Test if the means of a numerical variable differ significantly across categories of a categorical variable.</span>
+<span id="cb12-275"><a href="#cb12-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-276"><a href="#cb12-276" aria-hidden="true" tabindex="-1"></a><span class="fu">## - Categorical vs. Categorical:</span></span>
+<span id="cb12-277"><a href="#cb12-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-278"><a href="#cb12-278" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Chi-Square Test:** Assess the association between two categorical variables (e.g., is there a relationship between discount offered and customer location?).</span>
+<span id="cb12-279"><a href="#cb12-279" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-280"><a href="#cb12-280" aria-hidden="true" tabindex="-1"></a><span class="fu"># 4. Multivariate Analysis (Exploring Relationships Between Multiple Variables)</span></span>
+<span id="cb12-281"><a href="#cb12-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-282"><a href="#cb12-282" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Multiple Regression:** Analyze how multiple independent variables (e.g., discount, product type) influence a dependent variable (e.g., sales).</span>
+<span id="cb12-283"><a href="#cb12-283" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Logistic Regression:** Model the probability of a categorical outcome (e.g., purchase or no purchase) based on multiple independent variables.</span>
+<span id="cb12-284"><a href="#cb12-284" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Factor Analysis:** Identify underlying factors that explain the variance in a set of interrelated variables.</span>
+<span id="cb12-285"><a href="#cb12-285" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Cluster Analysis:** Group similar data points (e.g., customers with similar buying behavior) based on multiple variables.</span>
+<span id="cb12-286"><a href="#cb12-286" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Time Series Analysis:** Analyze sales or profit data over time to identify trends and seasonality.</span>
+<span id="cb12-287"><a href="#cb12-287" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-288"><a href="#cb12-288" aria-hidden="true" tabindex="-1"></a><span class="fu"># 2. Univariate Analysis (Understanding Individual Variables) </span></span>
+<span id="cb12-289"><a href="#cb12-289" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-290"><a href="#cb12-290" aria-hidden="true" tabindex="-1"></a><span class="fu">## - Numerical Variables:</span></span>
+<span id="cb12-291"><a href="#cb12-291" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>**Descriptive Statistics:**</span>
+<span id="cb12-292"><a href="#cb12-292" aria-hidden="true" tabindex="-1"></a>Calculate measures of central tendency and dispersion to understand the data distribution.</span>
+<span id="cb12-293"><a href="#cb12-293" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-294"><a href="#cb12-294" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>**Visualization:**</span>
+<span id="cb12-295"><a href="#cb12-295" aria-hidden="true" tabindex="-1"></a>Create histograms, box plots and density plots to visualize data </span>
+<span id="cb12-296"><a href="#cb12-296" aria-hidden="true" tabindex="-1"></a>distribution and identify potential outliers or skewness. </span>
+<span id="cb12-297"><a href="#cb12-297" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-298"><a href="#cb12-298" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>**Bar Charts &amp; Pie Charts:**</span>
+<span id="cb12-299"><a href="#cb12-299" aria-hidden="true" tabindex="-1"></a>  Visualize the proportion of data points within each category. </span>
+<span id="cb12-300"><a href="#cb12-300" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb12-301"><a href="#cb12-301" aria-hidden="true" tabindex="-1"></a><span class="fu"># 3. Bivariate Analysis (Exploring Relationships Between Two Variables) </span></span>
+<span id="cb12-302"><a href="#cb12-302" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-303"><a href="#cb12-303" aria-hidden="true" tabindex="-1"></a><span class="fu">## - Numerical vs. Numerical: </span></span>
+<span id="cb12-304"><a href="#cb12-304" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>**Scatter Plots:**</span>
+<span id="cb12-305"><a href="#cb12-305" aria-hidden="true" tabindex="-1"></a>Visualize the relationship between two numerical variables (e.g., </span>
+<span id="cb12-306"><a href="#cb12-306" aria-hidden="true" tabindex="-1"></a>discount vs. sales). </span>
+<span id="cb12-307"><a href="#cb12-307" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>**Correlation Analysis:**</span>
+<span id="cb12-308"><a href="#cb12-308" aria-hidden="true" tabindex="-1"></a>Calculate Pearson's correlation coefficient to measure the </span>
+<span id="cb12-309"><a href="#cb12-309" aria-hidden="true" tabindex="-1"></a>strength and direction of the linear relationship. </span>
+<span id="cb12-310"><a href="#cb12-310" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-311"><a href="#cb12-311" aria-hidden="true" tabindex="-1"></a><span class="fu">## - Numerical vs. Categorical: </span></span>
+<span id="cb12-312"><a href="#cb12-312" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>**Box Plots:**</span>
+<span id="cb12-313"><a href="#cb12-313" aria-hidden="true" tabindex="-1"></a>Compare the distribution of a numerical variable across different categories of a categorical variable (e.g., average profit for different product </span>
+<span id="cb12-314"><a href="#cb12-314" aria-hidden="true" tabindex="-1"></a>categories). </span>
+<span id="cb12-315"><a href="#cb12-315" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>**ANOVA (Analysis of Variance):**</span>
+<span id="cb12-316"><a href="#cb12-316" aria-hidden="true" tabindex="-1"></a>Test if the means of a numerical variable differ </span>
+<span id="cb12-317"><a href="#cb12-317" aria-hidden="true" tabindex="-1"></a>significantly across categories of a categorical variable. </span>
+<span id="cb12-318"><a href="#cb12-318" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-319"><a href="#cb12-319" aria-hidden="true" tabindex="-1"></a><span class="fu">## - Categorical vs. Categorical: </span></span>
+<span id="cb12-320"><a href="#cb12-320" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>**Chi-Square Test:**</span>
+<span id="cb12-321"><a href="#cb12-321" aria-hidden="true" tabindex="-1"></a>Assess the association between two categorical variables (e.g., </span>
+<span id="cb12-322"><a href="#cb12-322" aria-hidden="true" tabindex="-1"></a>is there a relationship between discount offered and customer location?). </span>
+<span id="cb12-323"><a href="#cb12-323" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-324"><a href="#cb12-324" aria-hidden="true" tabindex="-1"></a><span class="fu"># 4. Multivariate Analysis (Exploring Relationships Between Multiple Variables) </span></span>
+<span id="cb12-325"><a href="#cb12-325" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>**Multiple Regression:**</span>
+<span id="cb12-326"><a href="#cb12-326" aria-hidden="true" tabindex="-1"></a>Analyze how multiple independent variables (e.g., discount, </span>
+<span id="cb12-327"><a href="#cb12-327" aria-hidden="true" tabindex="-1"></a>product type) influence a dependent variable (e.g., sales). </span>
+<span id="cb12-328"><a href="#cb12-328" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>**Logistic Regression:**</span>
+<span id="cb12-329"><a href="#cb12-329" aria-hidden="true" tabindex="-1"></a>Model the probability of a categorical outcome (e.g., purchase or </span>
+<span id="cb12-330"><a href="#cb12-330" aria-hidden="true" tabindex="-1"></a>no purchase) based on multiple independent variables.</span>
+<span id="cb12-331"><a href="#cb12-331" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>**Factor Analysis:**</span>
+<span id="cb12-332"><a href="#cb12-332" aria-hidden="true" tabindex="-1"></a>Identify underlying factors that explain the variance in a set of interrelated variables. </span>
+<span id="cb12-333"><a href="#cb12-333" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>**Cluster Analysis:**</span>
+<span id="cb12-334"><a href="#cb12-334" aria-hidden="true" tabindex="-1"></a>Group similar data points (e.g., customers with similar buying behavior) based on multiple variables.</span>
+<span id="cb12-335"><a href="#cb12-335" aria-hidden="true" tabindex="-1"></a><span class="ss">  * </span>**Time Series Analysis:**</span>
+<span id="cb12-336"><a href="#cb12-336" aria-hidden="true" tabindex="-1"></a>Analyze sales or profit data over time to identify trends and seasonality. </span>
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
