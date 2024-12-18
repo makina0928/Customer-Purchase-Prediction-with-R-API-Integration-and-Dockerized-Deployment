@@ -1,10 +1,10 @@
-Here’s the corrected README summary and structure based on the clarification:
 
 ---
 
 ## Project Overview  
 This project involves building and deploying a binary classification model entirely using **R**. The dataset includes demographic and financial data (e.g., customer age, gender, and salary) and a binary purchase status (1 for purchase, 0 otherwise). The project emphasizes data science and machine learning skills, focusing on model building, evaluation, and deployment using R tools.  
 
+---
 Key highlights include:  
 1. Building predictive models (Logistic Regression and Decision Trees) using R.  
 2. Evaluating model performance with multiple metrics.  
@@ -15,11 +15,11 @@ Key highlights include:
 
 ## Key Components  
 
-### 1. Results  
+### Results  
 - **Exploratory Data Analysis (EDA)**: Insights into data distributions and patterns.  
 - **Model Comparison**: Performance metrics for Logistic Regression and Decision Tree models.  
 - **Deployment**: Steps to create, test, and containerize the REST API for serving predictions.  
-
+---
 ### 2. Project Structure  
 ```plaintext
 📂 Project_Root  
@@ -32,7 +32,7 @@ Key highlights include:
 └── 📄 README.md              # Project overview and instructions  
 ```
 
-### 3. How to Run  
+### How to Run  
 
 #### Prerequisites  
 - R and RStudio installed locally.  
