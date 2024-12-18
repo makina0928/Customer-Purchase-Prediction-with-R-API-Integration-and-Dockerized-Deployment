@@ -20,7 +20,7 @@ This project involves building and deploying a binary classification model entir
 - **Model Comparison**: Performance metrics for Logistic Regression and Decision Tree models.  
 - **Deployment**: Steps to create, test, and containerize the REST API for serving predictions.  
 ---
-### 2. Project Structure  
+### Project Structure  
 ```plaintext
 📂 Project_Root  
 ├── 📁 data/                  # Dataset and preprocessing scripts  
