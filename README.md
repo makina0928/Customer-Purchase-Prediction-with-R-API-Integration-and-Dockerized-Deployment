@@ -5,7 +5,7 @@
 This project involves building and deploying a binary classification model entirely using **R**. The dataset includes demographic and financial data (e.g., customer age, gender, and salary) and a binary purchase status (1 for purchase, 0 otherwise). The project emphasizes data science and machine learning skills, focusing on model building, evaluation, and deployment using R tools.  
 
 ---
-Key highlights include:  
+## Key highlights 
 1. Building predictive models (Logistic Regression and Decision Trees) using R.  
 2. Evaluating model performance with multiple metrics.  
 3. Deploying the trained Logistic Regression model as a REST API using the `plumber` package.  
