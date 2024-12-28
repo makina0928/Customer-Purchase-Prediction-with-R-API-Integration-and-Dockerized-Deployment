@@ -1,0 +1,9 @@
+# Navigate to the project folder
+cd project
+
+# Build the Docker image
+docker build -t purchase-prediction-api .
+
+docker run -p 8000:8000 purchase-prediction-api
+
+curl "http://localhost:8000/predict-purchase?EstimatedSalary=50000&Age=30&Gender=Male"
